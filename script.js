@@ -20,6 +20,58 @@ const coinIds = {
   ORE: "ore-network",
   RAY: "raydium"
 };
+// Mappa simbolo -> CoinGecko ID
+const coinIds = {
+  BTC: "bitcoin",
+  ETH: "ethereum",
+  SOL: "solana",
+  BNB: "binancecoin",
+  ORE: "ore-network",
+  RAY: "raydium"
+};
+
+// Collego le card
+const prices = {};
+const lastPrices = {};
+for(const sym in coinIds) {
+  prices[sym] = document.querySelector(`#${sym} .price`);
+  lastPrices[sym] = 0;
+}
+
+// Aggiorna prezzi live e cambia colore se sale/scende
+async function updatePrices() {
+  try {
+    const ids = Object.values(coinIds).join(',');
+    const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`);
+    const data = await res.json();
+
+    for(const sym in coinIds) {
+      const id = coinIds[sym];
+      if(data[id] && data[id].usd) {
+        const newPrice = data[id].usd;
+        prices[sym].textContent = "$ " + newPrice.toLocaleString();
+
+        // Colore dinamico
+        if(lastPrices[sym] > 0) {
+          if(newPrice > lastPrices[sym]) {
+            prices[sym].classList.add("up");
+            prices[sym].classList.remove("down");
+          } else if(newPrice < lastPrices[sym]) {
+            prices[sym].classList.add("down");
+            prices[sym].classList.remove("up");
+          }
+        }
+        lastPrices[sym] = newPrice;
+      }
+    }
+  } catch(e) {
+    console.error("Errore fetch prezzi:", e);
+  }
+}
+
+// Aggiorna subito e poi ogni 2 secondi
+updatePrices();
+setInterval(updatePrices, 2000);
 
 // Collego le card
 const prices = {};
