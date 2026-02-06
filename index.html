@@ -2,21 +2,42 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Crypto Dashboard</title>
+  <title>Crypto Prices</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="top-bar">
-    <button onclick="loadChart('BINANCE:BTCUSDT')">BTC</button>
-    <button onclick="loadChart('BINANCE:ETHUSDT')">ETH</button>
-    <button onclick="loadChart('BINANCE:XRPUSDT')">XRP</button>
-    <button onclick="loadChart('BINANCE:SOLUSDT')">SOL</button>
-    <button onclick="loadChart('GATEIO:OREUSDT')">ORE</button>
-    <button onclick="loadChart('GATEIO:RAYUSDT')">RAY</button>
-  </div>
+  <div class="container">
+    <div class="card" data-id="bitcoin">
+      <h2>BTC</h2>
+      <p class="price">--</p>
+    </div>
 
-  <div id="chart"></div>
+    <div class="card" data-id="ethereum">
+      <h2>ETH</h2>
+      <p class="price">--</p>
+    </div>
+
+    <div class="card" data-id="ripple">
+      <h2>XRP</h2>
+      <p class="price">--</p>
+    </div>
+
+    <div class="card" data-id="solana">
+      <h2>SOL</h2>
+      <p class="price">--</p>
+    </div>
+
+    <div class="card" data-id="ore-network">
+      <h2>ORE</h2>
+      <p class="price">--</p>
+    </div>
+
+    <div class="card" data-id="raydium">
+      <h2>RAY</h2>
+      <p class="price">--</p>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
