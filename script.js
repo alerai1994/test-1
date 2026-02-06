@@ -11,7 +11,44 @@ const minMaxEl = document.getElementById("min-max");
 const ctx = document.getElementById("priceChart").getContext('2d');const coins = ["bitcoin","ethereum","solana","binancecoin","ore-network","raydium"];
 const cardElements = document.querySelectorAll(".card");
 
-const modal = document.getElementById("modal");
+const modal = document.getElementById("modal");// Mappa simbolo -> ID CoinGecko
+const coinIds = {
+  BTC: "bitcoin",
+  ETH: "ethereum",
+  SOL: "solana",
+  BNB: "binancecoin",
+  ORE: "ore-network",
+  RAY: "raydium"
+};
+
+// Collego le card
+const prices = {};
+for(const sym in coinIds) {
+  prices[sym] = document.querySelector(`#${sym} .price`);
+}
+
+// Funzione per aggiornare prezzi in real-time
+async function updatePrices() {
+  try {
+    const ids = Object.values(coinIds).join(',');
+    const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`);
+    const data = await res.json();
+
+    for(const sym in coinIds) {
+      const id = coinIds[sym];
+      if(data[id] && data[id].usd) {
+        prices[sym].textContent = "$ " + data[id].usd.toLocaleString();
+      }
+    }
+  } catch(e) {
+    console.error("Errore fetch prezzi:", e);
+  }
+}
+
+// Aggiorna subito e poi ogni 2 secondi
+updatePrices();
+setInterval(updatePrices, 2000);
+
 const closeBtn = document.getElementById("close");
 const modalSymbol = document.getElementById("modal-symbol");
 const marketCapEl = document.getElementById("market-cap");
