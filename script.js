@@ -1,13 +1,32 @@
-function loadChart(symbol) {
-  document.getElementById("chart").innerHTML = `
-    <iframe
-      src="https://www.tradingview.com/widgetembed/?symbol=${symbol}&interval=1&theme=dark&style=1&locale=it"
-      style="width:100%; height:100%;"
-      frameborder="0"
-      allowfullscreen>
-    </iframe>
-  `;
+const cards = document.querySelectorAll(".card");
+
+async function updatePrices() {
+  const ids = [
+    "bitcoin",
+    "ethereum",
+    "ripple",
+    "solana",
+    "ore-network",
+    "raydium"
+  ].join(",");
+
+  const url = `https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd`;
+
+  const res = await fetch(url);
+  const data = await res.json();
+
+  cards.forEach(card => {
+    const id = card.dataset.id;
+    const priceEl = card.querySelector(".price");
+
+    if (data[id]) {
+      priceEl.textContent = `$ ${data[id].usd.toLocaleString()}`;
+    }
+  });
 }
 
-// Carica BTC di default
-loadChart("BINANCE:BTCUSDT");
+// primo caricamento
+updatePrices();
+
+// aggiorna ogni 10 secondi
+setInterval(updatePrices, 10000);
