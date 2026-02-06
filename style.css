@@ -1,3 +1,30 @@
+const prices = {
+  BTC: document.querySelector("#BTC .price"),
+  ETH: document.querySelector("#ETH .price"),
+  XRP: document.querySelector("#XRP .price"),
+  SOL: document.querySelector("#SOL .price"),
+  RAY: document.querySelector("#RAY .price")
+};
+
+// WebSocket Binance (REAL-TIME)
+const socket = new WebSocket(
+  "wss://stream.binance.com:9443/stream?streams=" +
+  "btcusdt@trade/ethusdt@trade/xrpusdt@trade/solusdt@trade/rayusdt@trade"
+);
+
+socket.onmessage = (event) => {
+  const msg = JSON.parse(event.data).data;
+  const symbol = msg.s.replace("USDT", "");
+  const price = parseFloat(msg.p);
+
+  if (prices[symbol]) {
+    prices[symbol].textContent = "$ " + price.toFixed(4);
+  }
+};
+
+socket.onerror = () => {
+  console.error("Errore WebSocket");
+};
 * {
   box-sizing: border-box;
 }
