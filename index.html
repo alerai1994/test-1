@@ -2,12 +2,23 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>Sfondo grigio</title>
+  <title>Caricamento</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <h1>Ciao 👋</h1>
+  <div id="loader">
+    <div id="bar">
+      <span id="percent">0%</span>
+    </div>
+  </div>
+
+  <div id="modal" class="hidden">
+    <div class="box">
+      <p>Caricamento completato</p>
+      <button id="continua">Continua</button>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
