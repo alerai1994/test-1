@@ -1,8 +1,56 @@
 body {
   margin: 0;
   height: 100vh;
-  background-color: #ccc; /* grigio */
+  background-color: #ccc;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: Arial, sans-serif;
+}
+
+/* Barra di caricamento */
+#loader {
+  width: 300px;
+  height: 30px;
+  background: #999;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+#bar {
+  width: 0%;
+  height: 100%;
+  background: #4caf50;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-weight: bold;
+}
+
+/* Modale */
+#modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.box {
+  background: white;
+  padding: 20px 30px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  cursor: pointer;
 }
