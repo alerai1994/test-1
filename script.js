@@ -1,3 +1,30 @@
+const prices = {
+  BTC: document.querySelector("#BTC .price"),
+  ETH: document.querySelector("#ETH .price"),
+  XRP: document.querySelector("#XRP .price"),
+  SOL: document.querySelector("#SOL .price"),
+  RAY: document.querySelector("#RAY .price")
+};
+
+// WebSocket Binance → REAL TIME
+const socket = new WebSocket(
+  "wss://stream.binance.com:9443/stream?streams=" +
+  "btcusdt@trade/ethusdt@trade/xrpusdt@trade/solusdt@trade/rayusdt@trade"
+);
+
+socket.onmessage = (event) => {
+  const data = JSON.parse(event.data).data;
+  const symbol = data.s.replace("USDT", "");
+  const price = parseFloat(data.p);
+
+  if (prices[symbol]) {
+    prices[symbol].textContent = "$ " + price.toFixed(4);
+  }
+};
+
+socket.onerror = () => {
+  console.error("Errore WebSocket");
+};
 const cards = document.querySelectorAll(".card");
 
 async function updatePrices() {
