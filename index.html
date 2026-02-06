@@ -15,6 +15,66 @@
       <div class="symbol">BTC</div>
       <div class="price">--</div>
     </div>
+
+    <div class="card" data-id="ethereum" id="ETH">
+      <div class="symbol">ETH</div>
+      <div class="price">--</div>
+    </div>
+
+    <div class="card" data-id="solana" id="SOL">
+      <div class="symbol">SOL</div>
+      <div class="price">--</div>
+    </div>
+
+    <div class="card" data-id="binancecoin" id="BNB">
+      <div class="symbol">BNB</div>
+      <div class="price">--</div>
+    </div>
+
+    <div class="card" data-id="ore-network" id="ORE">
+      <div class="symbol">ORE</div>
+      <div class="price">--</div>
+    </div>
+
+    <div class="card" data-id="raydium" id="RAY">
+      <div class="symbol">RAY</div>
+      <div class="price">--</div>
+    </div>
+  </div>
+
+  <!-- Modale info -->
+  <div id="modal" class="hidden">
+    <div class="modal-content">
+      <span id="close">&times;</span>
+      <h2 id="modal-symbol">--</h2>
+      <p id="market-cap">Market Cap: --</p>
+      <p id="volume">Volume 24h: --</p>
+      <p id="change">24h %: --</p>
+      <p id="min-max">Min / Max 24h: --</p>
+      <canvas id="priceChart" width="400" height="200"></canvas>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <title>Crypto Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <h1>Crypto Dashboard</h1>
+
+  <div class="container">
+    <div class="card" data-id="bitcoin" id="BTC">
+      <div class="symbol">BTC</div>
+      <div class="price">--</div>
+    </div>
     <div class="card" data-id="ethereum" id="ETH">
       <div class="symbol">ETH</div>
       <div class="price">--</div>
