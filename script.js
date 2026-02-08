@@ -41,22 +41,23 @@ binanceWS.onmessage = (msg) => {
     priceElement.textContent = `$${price}`;
 };
 
-// ================= BINGX WebSocket (ORE) =================
-const bingxWS = new WebSocket("wss://ws.bingx.com/sapi/v1/websocket");
-
-bingxWS.onopen = () => {
-    bingxWS.send(JSON.stringify({
-        "method": "SUBSCRIBE",
-        "params": ["ORE_USDT"]
-    }));
-};
+// ================= PancakeSwap WebSocket (ORE) =================
+const pancakeSwapWS = new WebSocket("wss://bsc.streamingfast.io/ws");
 
 let previousOREPrice = null;
 
-bingxWS.onmessage = (msg) => {
+pancakeSwapWS.onopen = () => {
+    pancakeSwapWS.send(JSON.stringify({
+        "id": 1,
+        "method": "subscribe",
+        "params": ["uniswap_v2.ORE-USDT"]
+    }));
+};
+
+pancakeSwapWS.onmessage = (msg) => {
     const res = JSON.parse(msg.data);
-    if (res.event === "trade" && res.data) {
-        const price = parseFloat(res.data.price).toFixed(6);
+    if (res.params && res.params.data) {
+        const price = parseFloat(res.params.data.price).toFixed(6);
 
         const priceElement = document.getElementById("oreusdt");
 
