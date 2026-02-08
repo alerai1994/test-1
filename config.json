@@ -11,8 +11,5 @@
       "network": "solana",
       "mint": "oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp"
     }
-  },
-  "chart": {
-    "maxPoints": 30
   }
 }
