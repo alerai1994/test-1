@@ -88,4 +88,12 @@ async function showInfo(id) {
     try {
         const symbolMap = {
             btcusdt: "bitcoin", 
-            ethusdt
+            ethusdt: "ethereum",
+            bnbusdt: "binancecoin",
+            solusdt: "solana",
+            rayusdt: "raydium",
+            oreusdt: "ore"
+        };
+        
+        const symbol = symbolMap[id];
+        const url = `https://api.coingecko.com/api/v3/
