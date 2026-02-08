@@ -1,35 +1,35 @@
-const coins = [
-    "bitcoin",
-    "ethereum",
-    "binancecoin",
-    "solana",
-    "ore-network",
-    "raydium"
-];
+// === BINANCE REALTIME (WebSocket) ===
+const socket = new WebSocket(
+    "wss://stream.binance.com:9443/ws/" +
+    "btcusdt@trade/" +
+    "ethusdt@trade/" +
+    "bnbusdt@trade/" +
+    "solusdt@trade/" +
+    "rayusdt@trade"
+);
 
-async function getPrices() {
+socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    const symbol = data.s.toLowerCase();
+    const price = parseFloat(data.p).toFixed(4);
+
+    const el = document.getElementById(symbol);
+    if (el) el.textContent = `$${price}`;
+};
+
+// === ORE (CoinGecko fallback) ===
+async function getORE() {
     try {
-        const url = `https://api.coingecko.com/api/v3/simple/price?ids=${coins.join(
-            ","
-        )}&vs_currencies=usd`;
-
-        const res = await fetch(url);
+        const res = await fetch(
+            "https://api.coingecko.com/api/v3/simple/price?ids=ore-network&vs_currencies=usd"
+        );
         const data = await res.json();
-
-        coins.forEach(coin => {
-            const priceElement = document.querySelector(
-                `#${coin} .price`
-            );
-            priceElement.textContent = `$${data[coin].usd}`;
-        });
-
-    } catch (error) {
-        console.error("Errore nel recupero prezzi", error);
+        document.getElementById("ore").textContent =
+            `$${data["ore-network"].usd}`;
+    } catch (e) {
+        document.getElementById("ore").textContent = "N/A";
     }
 }
 
-// primo caricamento
-getPrices();
-
-// aggiornamento ogni 10 secondi
-setInterval(getPrices, 10000);
+getORE();
+setInterval(getORE, 15000);
