@@ -18,7 +18,7 @@ h1 {
 
 .card {
     background: #0f172a;
-    width: 140px;
+    width: 150px;
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(0,0,0,0.6);
@@ -28,4 +28,14 @@ h1 {
     font-size: 1.4em;
     margin-top: 10px;
     color: #22d3ee;
+    transition: color 0.3s ease;
+}
+
+/* Colore verde e rosso per il movimento del prezzo */
+.green {
+    color: #22c55e;
+}
+
+.red {
+    color: #ef4444;
 }
