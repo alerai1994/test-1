@@ -1,6 +1,6 @@
 let lastPrices = {};
 
-// ================= BINANCE WebSocket =================
+// ================= BINANCE WebSocket (BTC, ETH, BNB, SOL, RAY) =================
 const binancePairs = [
     "btcusdt@trade",
     "ethusdt@trade",
@@ -22,30 +22,29 @@ binanceWS.onmessage = (msg) => {
     updatePrice(symbol, price);
 };
 
-// ================= JUPITER API (ORE) =================
-// Ore mint su Solana (da Jupiter API)
-const ORE_MINT = "OREv2TokenMintAddressPlaceholder"; // sostituisci con mint reale ORE su Jupiter
+// ================= JUPITER API (ORE price polling) =================
+// Indirizzo mint reale ORE su Solana (da Explorer Solana / Jupiter) :contentReference[oaicite:1]{index=1}
+const ORE_MINT = "oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp";
 
 async function fetchORE() {
     try {
+        // Usa l’API Jupiter Price API (lite-api.jup.ag)
         const res = await fetch(
-            `https://price.jup.ag/v4/price?ids=${ORE_MINT}`
+            `https://lite-api.jup.ag/v1/price?id=${ORE_MINT}`
         );
         const json = await res.json();
-        if(json.data && json.data[ORE_MINT]) {
-            const price = json.data[ORE_MINT].price;
-            updatePrice("oreusdt", price);
-        }
+        const price = parseFloat(json.data.price).toFixed(6);
+        updatePrice("oreusdt", parseFloat(price));
     } catch (e) {
-        console.error("Errore Jupiter ORE", e);
+        console.error("Errore Jupiter ORE:", e);
     }
 }
 
-// Polling ultra-rapido ogni 2 secondi
+// Prima chiamata e polling ogni 2 secondi
 fetchORE();
 setInterval(fetchORE, 2000);
 
-// ================= UPDATE UI + COLOR =================
+// ================= Helper UI =================
 function updatePrice(id, price) {
     const el = document.getElementById(id);
     if (!el) return;
