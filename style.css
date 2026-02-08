@@ -19,10 +19,11 @@ h1 {
 
 .card {
     background: #0f172a;
-    width: 160px;          /* più stretto */
-    padding: 15px;         /* meno padding */
+    width: 160px;
+    padding: 15px;
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    cursor: pointer;
 }
 
 .card h2 {
@@ -42,6 +43,45 @@ h1 {
 
 canvas {
     margin-top: 5px;
-    height: 70px !important;  /* grafico più piccolo */
+    height: 70px !important;
     width: 100% !important;
+}
+
+/* MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.7);
+}
+
+.modal-content {
+  background-color: #0f172a;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  color: #e5e7eb;
+  text-align: left;
+}
+
+.close {
+  color: #ef4444;
+  float: right;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#modalList li {
+  margin-bottom: 6px;
+}
+#cmcLink {
+  display: block;
+  margin-top: 10px;
+  color: #38bdf8;
+  text-decoration: underline;
 }
