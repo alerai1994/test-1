@@ -6,33 +6,42 @@ body {
 }
 
 h1 {
-    margin: 20px;
+    margin: 15px;
+    font-size: 1.5em;
 }
 
 .container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 20px;
+    gap: 12px;
 }
 
 .card {
     background: #0f172a;
-    width: 220px;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    width: 160px;          /* più stretto */
+    padding: 15px;         /* meno padding */
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+.card h2 {
+    font-size: 1em;
+    margin: 0;
 }
 
 .price {
-    font-size: 1.4em;
-    margin: 10px 0;
+    font-size: 1.1em;
+    margin: 8px 0;
     color: #38bdf8;
     transition: color 0.25s ease;
 }
 
 .green { color: #22c55e; }
 .red   { color: #ef4444; }
+
 canvas {
-    margin-top: 10px;
+    margin-top: 5px;
+    height: 70px !important;  /* grafico più piccolo */
+    width: 100% !important;
 }
