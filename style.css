@@ -1,6 +1,6 @@
 body {
     background: #020617;
-    color: white;
+    color: #e5e7eb;
     font-family: Arial, sans-serif;
     text-align: center;
 }
@@ -13,12 +13,12 @@ h1 {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 18px;
 }
 
 .card {
     background: #0f172a;
-    width: 150px;
+    width: 140px;
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(0,0,0,0.6);
