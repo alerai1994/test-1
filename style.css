@@ -6,30 +6,86 @@ body {
 }
 
 h1 {
-    margin: 20px;
+    margin: 15px;
+    font-size: 1.5em;
 }
 
 .container {
     display: flex;
-    justify-content: center;
     flex-wrap: wrap;
-    gap: 18px;
+    justify-content: center;
+    gap: 12px;
 }
 
 .card {
     background: #0f172a;
-    width: 150px;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    width: 160px;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    cursor: pointer;
+}
+
+.card h2 {
+    font-size: 1em;
+    margin: 0;
 }
 
 .price {
-    font-size: 1.4em;
-    margin-top: 10px;
+    font-size: 1.1em;
+    margin: 8px 0;
     color: #38bdf8;
     transition: color 0.25s ease;
 }
 
 .green { color: #22c55e; }
 .red   { color: #ef4444; }
+
+#modalTitle {
+    font-size: 1.4em;
+    margin-bottom: 15px;
+}
+
+#modalList li {
+    margin-bottom: 8px;
+}
+
+#cmcLink {
+    margin-top: 20px;
+    display: inline-block;
+    color: #38bdf8;
+    text-decoration: underline;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.7);
+}
+
+.modal-content {
+  background-color: #0f172a;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  color: #e5e7eb;
+  text-align: left;
+}
+
+.close {
+  color: #ef4444;
+  font-size: 24px;
+  font-weight: bold;
+  float: right;
+  cursor: pointer;
+}
+
+canvas {
+    height: 150px;
+    margin-top: 10px;
+}
