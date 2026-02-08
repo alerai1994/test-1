@@ -11,14 +11,14 @@ h1 {
 
 .container {
     display: flex;
-    justify-content: center;
     flex-wrap: wrap;
-    gap: 18px;
+    justify-content: center;
+    gap: 20px;
 }
 
 .card {
     background: #0f172a;
-    width: 150px;
+    width: 220px;
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 0 20px rgba(0,0,0,0.6);
@@ -26,10 +26,13 @@ h1 {
 
 .price {
     font-size: 1.4em;
-    margin-top: 10px;
+    margin: 10px 0;
     color: #38bdf8;
     transition: color 0.25s ease;
 }
 
 .green { color: #22c55e; }
 .red   { color: #ef4444; }
+canvas {
+    margin-top: 10px;
+}
