@@ -18,33 +18,32 @@ binanceWS.onmessage = (msg) => {
     const data = JSON.parse(msg.data).data;
     const symbol = data.s.toLowerCase();
     const price = parseFloat(data.p);
-
     updatePrice(symbol, price);
 };
 
-// ================= JUPITER API (ORE price polling) =================
-// Indirizzo mint reale ORE su Solana (da Explorer Solana / Jupiter) :contentReference[oaicite:1]{index=1}
-const ORE_MINT = "oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp";
+// ================= JUPITER API (ORE) =================
+const ORE_MINT = "oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp"; // mint reale ORE
 
 async function fetchORE() {
     try {
-        // Usa l’API Jupiter Price API (lite-api.jup.ag)
         const res = await fetch(
-            `https://lite-api.jup.ag/v1/price?id=${ORE_MINT}`
+            `https://lite-api.jup.ag/price/v3?ids=${ORE_MINT}`
         );
         const json = await res.json();
-        const price = parseFloat(json.data.price).toFixed(6);
-        updatePrice("oreusdt", parseFloat(price));
+        const data = json.data?.[ORE_MINT];
+        if (data && data.price) {
+            updatePrice("oreusdt", parseFloat(data.price));
+        }
     } catch (e) {
-        console.error("Errore Jupiter ORE:", e);
+        console.error("Errore caricamento prezzo ORE:", e);
     }
 }
 
-// Prima chiamata e polling ogni 2 secondi
+// Primo caricamento + polling ogni 2 secondi
 fetchORE();
 setInterval(fetchORE, 2000);
 
-// ================= Helper UI =================
+// ================= UI Update + Colore =================
 function updatePrice(id, price) {
     const el = document.getElementById(id);
     if (!el) return;
