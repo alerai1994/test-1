@@ -22,9 +22,9 @@ binanceWS.onmessage = (msg) => {
     updatePrice(symbol, price);
 };
 
-// ================= JUPITER (ORE) =================
-// ORE mint address (Solana)
-const ORE_MINT = "oreoU2P8rKz7H7tY79DbDeihdj5Z8SGvtQvE4H14RZ8";
+// ================= JUPITER API (ORE) =================
+// Ore mint su Solana (da Jupiter API)
+const ORE_MINT = "OREv2TokenMintAddressPlaceholder"; // sostituisci con mint reale ORE su Jupiter
 
 async function fetchORE() {
     try {
@@ -32,18 +32,20 @@ async function fetchORE() {
             `https://price.jup.ag/v4/price?ids=${ORE_MINT}`
         );
         const json = await res.json();
-        const price = json.data[ORE_MINT].price;
-        updatePrice("oreusdt", price);
+        if(json.data && json.data[ORE_MINT]) {
+            const price = json.data[ORE_MINT].price;
+            updatePrice("oreusdt", price);
+        }
     } catch (e) {
         console.error("Errore Jupiter ORE", e);
     }
 }
 
-// refresh ogni 2 secondi
+// Polling ultra-rapido ogni 2 secondi
 fetchORE();
 setInterval(fetchORE, 2000);
 
-// ================= UI Update + Color =================
+// ================= UPDATE UI + COLOR =================
 function updatePrice(id, price) {
     const el = document.getElementById(id);
     if (!el) return;
