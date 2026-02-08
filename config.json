@@ -1,40 +1,14 @@
 {
-    "symbols": [
-        {
-            "symbol": "BTC",
-            "pair": "btcusdt",
-            "exchange": "binance",
-            "websocket": "wss://stream.binance.com:9443/stream?streams=btcusdt@trade"
+    "exchanges": {
+        "binance": {
+            "type": "websocket",
+            "symbols": ["BTC", "ETH", "BNB", "SOL", "RAY"]
         },
-        {
-            "symbol": "ETH",
-            "pair": "ethusdt",
-            "exchange": "binance",
-            "websocket": "wss://stream.binance.com:9443/stream?streams=ethusdt@trade"
-        },
-        {
-            "symbol": "BNB",
-            "pair": "bnbusdt",
-            "exchange": "binance",
-            "websocket": "wss://stream.binance.com:9443/stream?streams=bnbusdt@trade"
-        },
-        {
-            "symbol": "SOL",
-            "pair": "solusdt",
-            "exchange": "binance",
-            "websocket": "wss://stream.binance.com:9443/stream?streams=solusdt@trade"
-        },
-        {
-            "symbol": "RAY",
-            "pair": "rayusdt",
-            "exchange": "binance",
-            "websocket": "wss://stream.binance.com:9443/stream?streams=rayusdt@trade"
-        },
-        {
+        "jupiter": {
+            "type": "polling",
             "symbol": "ORE",
-            "pair": "oreusdt",
-            "exchange": "pancakeswap",
-            "websocket": "wss://bsc.streamingfast.io/ws"
+            "interval_ms": 2000,
+            "network": "solana"
         }
-    ]
+    }
 }
