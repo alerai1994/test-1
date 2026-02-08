@@ -6,6 +6,7 @@ function updatePrice(id, price) {
     const el = document.getElementById(id);
     if (!el) return;
 
+    // Setta il colore verde o rosso in base alla variazione del prezzo
     if (lastPrices[id] !== undefined) {
         if (price > lastPrices[id]) {
             el.classList.remove("red");
@@ -69,7 +70,7 @@ async function showInfo(id) {
         bnbusdt: "binancecoin",
         solusdt: "solana",
         rayusdt: "raydium",
-        oreusdt: "ore"
+        oreusdt: "oreo"
     };
 
     const symbol = symbolMap[id];
@@ -87,4 +88,6 @@ async function showInfo(id) {
 
         list.innerHTML = `
             <li>Volume (24h): $${volume}</li>
-            <li>Min Prezzo (24h): $${minPrice}</li
+            <li>Min Prezzo (24h): $${minPrice}</li>
+            <li>Max Prezzo (24h): $${maxPrice}</li>
+            <li>Total
