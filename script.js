@@ -5,7 +5,9 @@ const socket = new WebSocket(
     "ethusdt@trade/" +
     "bnbusdt@trade/" +
     "solusdt@trade/" +
-    "rayusdt@trade"
+    "rayusdt@trade"  +
+    "oreusdt@trade"  +
+    
 );
 
 socket.onmessage = (event) => {
