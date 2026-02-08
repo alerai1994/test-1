@@ -27,15 +27,9 @@ h1 {
 .price {
     font-size: 1.4em;
     margin-top: 10px;
-    color: #22d3ee;
-    transition: color 0.3s ease;
+    color: #38bdf8;
+    transition: color 0.25s ease;
 }
 
-/* Colore verde e rosso per il movimento del prezzo */
-.green {
-    color: #22c55e;
-}
-
-.red {
-    color: #ef4444;
-}
+.green { color: #22c55e; }
+.red   { color: #ef4444; }
