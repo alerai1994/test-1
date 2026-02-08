@@ -1,1 +1,36 @@
+body {
+    background: #0f172a;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
 
+h1 {
+    margin: 20px 0;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+.card {
+    background: #1e293b;
+    width: 160px;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.4);
+}
+
+.card img {
+    width: 50px;
+    height: 50px;
+}
+
+.price {
+    font-size: 1.3em;
+    margin-top: 10px;
+    color: #38bdf8;
+}
