@@ -1,45 +1,63 @@
-// Carica il file JSON con la configurazione
-fetch('config.json')
-    .then(response => response.json())
-    .then(config => {
-        config.symbols.forEach(symbol => {
-            // Connetti a ciascun WebSocket per ogni simbolo
-            const ws = new WebSocket(symbol.websocket);
+let lastPrices = {};
 
-            let previousPrice = null;
+// ================= BINANCE WebSocket =================
+const binancePairs = [
+    "btcusdt@trade",
+    "ethusdt@trade",
+    "bnbusdt@trade",
+    "solusdt@trade",
+    "rayusdt@trade"
+];
 
-            ws.onmessage = (msg) => {
-                const data = JSON.parse(msg.data).data;
-                let price = null;
+const binanceWS = new WebSocket(
+    "wss://stream.binance.com:9443/stream?streams=" +
+    binancePairs.join("/")
+);
 
-                // Gestisci i simboli che provengono da Binance
-                if (data && data.p) {
-                    price = parseFloat(data.p).toFixed(6);
-                }
-                // Gestisci PancakeSwap per ORE
-                else if (data && data.price) {
-                    price = parseFloat(data.price).toFixed(6);
-                }
+binanceWS.onmessage = (msg) => {
+    const data = JSON.parse(msg.data).data;
+    const symbol = data.s.toLowerCase();
+    const price = parseFloat(data.p);
 
-                const priceElement = document.getElementById(symbol.pair);
-                if (priceElement) {
-                    if (previousPrice !== null) {
-                        if (price > previousPrice) {
-                            priceElement.classList.remove("red");
-                            priceElement.classList.add("green");
-                        } else if (price < previousPrice) {
-                            priceElement.classList.remove("green");
-                            priceElement.classList.add("red");
-                        }
-                    }
+    updatePrice(symbol, price);
+};
 
-                    // Aggiorna il prezzo
-                    priceElement.textContent = `$${price}`;
-                    previousPrice = price;
-                }
-            };
-        });
-    })
-    .catch(error => {
-        console.error("Errore nel caricare il file JSON: ", error);
-    });
+// ================= JUPITER (ORE) =================
+// ORE mint address (Solana)
+const ORE_MINT = "oreoU2P8rKz7H7tY79DbDeihdj5Z8SGvtQvE4H14RZ8";
+
+async function fetchORE() {
+    try {
+        const res = await fetch(
+            `https://price.jup.ag/v4/price?ids=${ORE_MINT}`
+        );
+        const json = await res.json();
+        const price = json.data[ORE_MINT].price;
+        updatePrice("oreusdt", price);
+    } catch (e) {
+        console.error("Errore Jupiter ORE", e);
+    }
+}
+
+// refresh ogni 2 secondi
+fetchORE();
+setInterval(fetchORE, 2000);
+
+// ================= UI Update + Color =================
+function updatePrice(id, price) {
+    const el = document.getElementById(id);
+    if (!el) return;
+
+    if (lastPrices[id] !== undefined) {
+        if (price > lastPrices[id]) {
+            el.classList.remove("red");
+            el.classList.add("green");
+        } else if (price < lastPrices[id]) {
+            el.classList.remove("green");
+            el.classList.add("red");
+        }
+    }
+
+    el.textContent = `$${price.toFixed(6)}`;
+    lastPrices[id] = price;
+}
