@@ -117,11 +117,20 @@ function drawMiniChart(ctx, data) {
 function initControls() {
   document.querySelectorAll(".timeframes button").forEach(btn => {
     btn.onclick = () => {
+      document
+        .querySelectorAll(".timeframes button")
+        .forEach(b => b.classList.remove("active"));
+
+      btn.classList.add("active");
       currentTF = btn.dataset.tf;
       loadMainChart();
     };
   });
+
+  // attiva di default
+  document.querySelector(`[data-tf="${currentTF}"]`).classList.add("active");
 }
+
 
 function initMainChart() {
   chart = LightweightCharts.createChart(document.getElementById("chart"), {
