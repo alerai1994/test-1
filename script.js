@@ -1,7 +1,8 @@
 let chart, candleSeries, lineSeries;
 let currentSymbol, currentTF;
 let config;
-const lastPrices = {};
+const tickerData = {};
+const tickerCharts = {};
 
 fetch("config.json")
   .then(r => r.json())
@@ -15,43 +16,48 @@ fetch("config.json")
 function init() {
   initNetwork();
   initTickers();
-  initControls();
-  initChart();
-  loadCandles();
-  updateTickers();
+  initMainChart();
+  loadMainChart();
   setInterval(updateTickers, 2000);
 }
 
-/* ================= NETWORK ================= */
+/* ========= NETWORK ========= */
 function initNetwork() {
   const dot = document.getElementById("net-dot");
   const text = document.getElementById("net-text");
-
-  function update() {
+  const update = () => {
     dot.style.background = navigator.onLine ? "green" : "red";
     text.textContent = navigator.onLine ? "ONLINE" : "OFFLINE";
-  }
+  };
   window.addEventListener("online", update);
   window.addEventListener("offline", update);
   update();
 }
 
-/* ================= TICKERS ================= */
+/* ========= TICKERS ========= */
 function initTickers() {
   const box = document.getElementById("tickers");
 
   config.symbols.forEach(s => {
-    lastPrices[s.pair] = 0;
+    tickerData[s.pair] = [];
+
     const div = document.createElement("div");
     div.className = "ticker";
-    div.id = `ticker-${s.pair}`;
-    div.innerHTML = `<strong>${s.name}</strong><br><span>--</span>`;
+    div.id = s.pair;
+    div.innerHTML = `
+      <strong>${s.name}</strong><br>
+      <span class="price">--</span>
+      <canvas></canvas>
+    `;
     div.onclick = () => {
       currentSymbol = s.pair;
-      document.getElementById("symbol").value = s.pair;
-      loadCandles();
+      loadMainChart();
     };
     box.appendChild(div);
+
+    const canvas = div.querySelector("canvas");
+    const ctx = canvas.getContext("2d");
+    tickerCharts[s.pair] = ctx;
   });
 }
 
@@ -60,92 +66,77 @@ function updateTickers() {
     .then(r => r.json())
     .then(data => {
       config.symbols.forEach(s => {
-        const ticker = data.find(d => d.symbol === s.pair);
-        if (!ticker) return;
+        const t = data.find(d => d.symbol === s.pair);
+        if (!t) return;
 
-        const price = parseFloat(ticker.price);
-        const prev = lastPrices[s.pair];
-        lastPrices[s.pair] = price;
+        const price = +t.price;
+        const arr = tickerData[s.pair];
+        arr.push(price);
+        if (arr.length > 20) arr.shift();
 
-        const el = document.getElementById(`ticker-${s.pair}`);
-        el.querySelector("span").textContent = price.toFixed(2);
+        const el = document.getElementById(s.pair);
+        el.querySelector(".price").textContent = price.toFixed(2);
 
-        el.classList.remove("green", "red");
-        if (prev !== 0) {
-          el.classList.add(price >= prev ? "green" : "red");
+        if (arr.length > 1) {
+          el.classList.remove("green", "red");
+          el.classList.add(price >= arr[arr.length - 2] ? "green" : "red");
         }
 
-        if (s.pair === currentSymbol && lineSeries) {
-          lineSeries.update({
-            time: Math.floor(Date.now() / 1000),
-            value: price
-          });
-        }
+        drawMiniChart(tickerCharts[s.pair], arr);
       });
     });
 }
 
-/* ================= CONTROLS ================= */
-function initControls() {
-  const sel = document.getElementById("symbol");
+function drawMiniChart(ctx, data) {
+  const w = ctx.canvas.width;
+  const h = ctx.canvas.height;
+  ctx.clearRect(0, 0, w, h);
 
-  config.symbols.forEach(s => {
-    const opt = document.createElement("option");
-    opt.value = s.pair;
-    opt.textContent = s.name;
-    sel.appendChild(opt);
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+
+  ctx.strokeStyle = data[data.length - 1] >= data[0] ? "#0ecb81" : "#f6465d";
+  ctx.beginPath();
+
+  data.forEach((v, i) => {
+    const x = (i / (data.length - 1)) * w;
+    const y = h - ((v - min) / (max - min || 1)) * h;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
   });
 
-  sel.value = currentSymbol;
-  sel.onchange = () => {
-    currentSymbol = sel.value;
-    loadCandles();
-  };
-
-  document.querySelectorAll(".timeframes button").forEach(b => {
-    b.onclick = () => {
-      currentTF = b.dataset.tf;
-      loadCandles();
-    };
-  });
+  ctx.stroke();
+  ctx.fillStyle = ctx.strokeStyle;
+  ctx.beginPath();
+  ctx.arc(w - 4, h - ((data[data.length - 1] - min) / (max - min || 1)) * h, 3, 0, Math.PI * 2);
+  ctx.fill();
 }
 
-/* ================= CHART ================= */
-function initChart() {
+/* ========= MAIN CHART ========= */
+function initMainChart() {
   chart = LightweightCharts.createChart(document.getElementById("chart"), {
     layout: { background: { color: "#0b0e11" }, textColor: "#d1d4dc" },
-    grid: {
-      vertLines: { color: "#161a1e" },
-      horzLines: { color: "#161a1e" }
-    },
+    grid: { vertLines: { color: "#161a1e" }, horzLines: { color: "#161a1e" } },
     crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
     rightPriceScale: { borderColor: "#2b3139" },
-    timeScale: { borderColor: "#2b3139" }
+    timeScale: { borderColor: "#2b3139", timeVisible: true }
   });
 
   candleSeries = chart.addCandlestickSeries({
     upColor: "#0ecb81",
     downColor: "#f6465d",
-    borderUpColor: "#0ecb81",
-    borderDownColor: "#f6465d",
     wickUpColor: "#0ecb81",
     wickDownColor: "#f6465d"
   });
 
-  lineSeries = chart.addLineSeries({
-    color: "#f0b90b",
-    lineWidth: 2
-  });
+  lineSeries = chart.addLineSeries({ color: "#f0b90b", lineWidth: 2 });
 
   window.addEventListener("resize", () => {
-    chart.applyOptions({
-      width: document.getElementById("chart").clientWidth
-    });
+    chart.applyOptions({ width: document.getElementById("chart").clientWidth });
   });
 }
 
-function loadCandles() {
-  fetch(`https://api.binance.com/api/v3/klines?symbol=${currentSymbol}&interval=${currentTF}&limit=300`)
+function loadMainChart() {
+  fetch(`https://api.binance.com/api/v3/klines?symbol=${currentSymbol}&interval=${currentTF}&limit=500`)
     .then(r => r.json())
     .then(data => {
       const candles = data.map(d => ({
@@ -155,162 +146,16 @@ function loadCandles() {
         low: +d[3],
         close: +d[4]
       }));
-
       candleSeries.setData(candles);
       lineSeries.setData(candles.map(c => ({ time: c.time, value: c.close })));
+      chart.timeScale().fitContent();
     });
 }
-let chart, candleSeries, lineSeries;
-let currentSymbol, currentTF;
-let config;
-const prices = {};
 
-fetch("config.json")
-  .then(r => r.json())
-  .then(c => {
-    config = c;
-    currentSymbol = c.defaultSymbol;
-    currentTF = c.defaultTimeframe;
-    init();
-  });
-
-function init() {
-  initNetwork();
-  initTickers();
-  initChart();
-  initControls();
-  loadCandles();
-  setInterval(updatePrices, 1000);
-}
-
-/* ===================== NETWORK ===================== */
-function initNetwork() {
-  const dot = document.getElementById("net-dot");
-  const text = document.getElementById("net-text");
-
-  function update() {
-    dot.style.background = navigator.onLine ? "green" : "red";
-    text.textContent = navigator.onLine ? "ONLINE" : "OFFLINE";
-  }
-
-  window.addEventListener("online", update);
-  window.addEventListener("offline", update);
-  update();
-}
-
-/* ===================== TICKERS ===================== */
-function initTickers() {
-  const list = document.getElementById("ticker-list");
-
-  config.symbols.forEach(s => {
-    prices[s.pair] = 0;
-    const div = document.createElement("div");
-    div.className = "ticker";
-    div.id = `ticker-${s.pair}`;
-    div.textContent = `${s.name}: --`;
-    div.onclick = () => {
-      currentSymbol = s.pair;
-      document.getElementById("symbol").value = s.pair;
-      loadCandles();
-    };
-    list.appendChild(div);
-  });
-}
-
-function updatePrices() {
-  config.symbols.forEach(s => {
-    fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${s.pair}`)
-      .then(r => r.json())
-      .then(d => {
-        const price = +d.price;
-        const el = document.getElementById(`ticker-${s.pair}`);
-        const prev = prices[s.pair];
-        prices[s.pair] = price;
-
-        el.textContent = `${s.name}: ${price.toFixed(2)}`;
-        el.className = "ticker " + (price >= prev ? "green" : "red");
-
-        if (s.pair === currentSymbol) {
-          lineSeries.update({
-            time: Math.floor(Date.now() / 1000),
-            value: price
-          });
-        }
-      });
-  });
-}
-
-/* ===================== CONTROLS ===================== */
-function initControls() {
-  const sel = document.getElementById("symbol");
-
-  config.symbols.forEach(s => {
-    const opt = document.createElement("option");
-    opt.value = s.pair;
-    opt.textContent = s.name;
-    sel.appendChild(opt);
-  });
-
-  sel.value = currentSymbol;
-  sel.onchange = () => {
-    currentSymbol = sel.value;
-    loadCandles();
+/* ========= TIMEFRAMES ========= */
+document.querySelectorAll(".timeframes button").forEach(b => {
+  b.onclick = () => {
+    currentTF = b.dataset.tf;
+    loadMainChart();
   };
-
-  document.querySelectorAll(".timeframes button").forEach(btn => {
-    btn.onclick = () => {
-      currentTF = btn.dataset.tf;
-      loadCandles();
-    };
-  });
-}
-
-/* ===================== CHART ===================== */
-function initChart() {
-  chart = LightweightCharts.createChart(document.getElementById("chart"), {
-    layout: { background: { color: "#0b0e11" }, textColor: "#d1d4dc" },
-    grid: {
-      vertLines: { color: "#161a1e" },
-      horzLines: { color: "#161a1e" }
-    },
-    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
-    rightPriceScale: { borderColor: "#2b3139" },
-    timeScale: { borderColor: "#2b3139" }
-  });
-
-  candleSeries = chart.addCandlestickSeries({
-    upColor: "#0ecb81",
-    downColor: "#f6465d",
-    borderUpColor: "#0ecb81",
-    borderDownColor: "#f6465d",
-    wickUpColor: "#0ecb81",
-    wickDownColor: "#f6465d"
-  });
-
-  lineSeries = chart.addLineSeries({
-    color: "#f0b90b",
-    lineWidth: 2
-  });
-}
-
-function loadCandles() {
-  fetch(`https://api.binance.com/api/v3/klines?symbol=${currentSymbol}&interval=${currentTF}&limit=200`)
-    .then(r => r.json())
-    .then(data => {
-      const candles = data.map(d => ({
-        time: d[0] / 1000,
-        open: +d[1],
-        high: +d[2],
-        low: +d[3],
-        close: +d[4]
-      }));
-
-      const line = candles.map(c => ({
-        time: c.time,
-        value: c.close
-      }));
-
-      candleSeries.setData(candles);
-      lineSeries.setData(line);
-    });
-}
+});
