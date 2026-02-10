@@ -1,91 +1,80 @@
 body {
-    background: #020617;
-    color: #e5e7eb;
-    font-family: Arial, sans-serif;
-    text-align: center;
-}
-
-h1 {
-    margin: 15px;
-    font-size: 1.5em;
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0b0e11;
+  color: white;
 }
 
 .container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 12px;
+  text-align: center;
+  padding: 40px;
 }
 
-.card {
-    background: #0f172a;
-    width: 160px;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
-    cursor: pointer;
+h1 {
+  font-size: 64px;
+  margin-bottom: 20px;
 }
 
-.card h2 {
-    font-size: 1em;
-    margin: 0;
+.search {
+  margin-bottom: 40px;
 }
 
-.price {
-    font-size: 1.1em;
-    margin: 8px 0;
-    color: #38bdf8;
-    transition: color 0.25s ease;
-}
-
-.green { color: #22c55e; }
-.red   { color: #ef4444; }
-
-#modalTitle {
-    font-size: 1.4em;
-    margin-bottom: 15px;
-}
-
-#modalList li {
-    margin-bottom: 8px;
-}
-
-#cmcLink {
-    margin-top: 20px;
-    display: inline-block;
-    color: #38bdf8;
-    text-decoration: underline;
-}
-
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 999;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.7);
-}
-
-.modal-content {
-  background-color: #0f172a;
-  margin: 10% auto;
-  padding: 20px;
-  border-radius: 10px;
+.search input {
+  padding: 10px;
   width: 300px;
-  color: #e5e7eb;
-  text-align: left;
+  border-radius: 6px;
+  border: none;
 }
 
-.close {
-  color: #ef4444;
-  font-size: 24px;
-  font-weight: bold;
-  float: right;
+.search button {
+  padding: 10px 20px;
+  margin-left: 10px;
+  background: #f0b90b;
+  border: none;
+  border-radius: 6px;
   cursor: pointer;
 }
 
+.crypto-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+}
+
+.crypto {
+  background: #161a1e;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.crypto.green {
+  border: 2px solid #0ecb81;
+}
+
+.crypto.red {
+  border: 2px solid #f6465d;
+}
+
+.price {
+  font-size: 20px;
+  margin: 10px 0;
+}
+
 canvas {
-    height: 150px;
-    margin-top: 10px;
+  width: 100%;
+  height: 100px;
+}
+
+.status {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+}
+
+#net-dot {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: red;
+  display: inline-block;
 }
