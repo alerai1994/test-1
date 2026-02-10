@@ -1,3 +1,107 @@
+let chart, candleSeries;
+let currentSymbol, currentTF;
+let config;
+
+fetch("config.json")
+  .then(r => r.json())
+  .then(c => {
+    config = c;
+    currentSymbol = c.defaultSymbol;
+    currentTF = c.defaultTimeframe;
+    init();
+  });
+
+function init() {
+  initNetwork();
+  initSymbolSelector();
+  initChart();
+  loadData();
+}
+
+function initSymbolSelector() {
+  const sel = document.getElementById("symbol");
+  config.symbols.forEach(s => {
+    const opt = document.createElement("option");
+    opt.value = s.pair;
+    opt.textContent = s.name;
+    sel.appendChild(opt);
+  });
+
+  sel.value = currentSymbol;
+  sel.onchange = () => {
+    currentSymbol = sel.value;
+    loadData();
+  };
+
+  document.querySelectorAll(".timeframes button").forEach(btn => {
+    btn.onclick = () => {
+      currentTF = btn.dataset.tf;
+      loadData();
+    };
+  });
+}
+
+function initChart() {
+  chart = LightweightCharts.createChart(document.getElementById("chart"), {
+    layout: {
+      background: { color: "#0b0e11" },
+      textColor: "#d1d4dc"
+    },
+    grid: {
+      vertLines: { color: "#161a1e" },
+      horzLines: { color: "#161a1e" }
+    },
+    crosshair: {
+      mode: LightweightCharts.CrosshairMode.Normal
+    },
+    timeScale: {
+      borderColor: "#2b3139"
+    },
+    rightPriceScale: {
+      borderColor: "#2b3139"
+    }
+  });
+
+  candleSeries = chart.addCandlestickSeries({
+    upColor: "#0ecb81",
+    downColor: "#f6465d",
+    borderUpColor: "#0ecb81",
+    borderDownColor: "#f6465d",
+    wickUpColor: "#0ecb81",
+    wickDownColor: "#f6465d"
+  });
+}
+
+function loadData() {
+  fetch(`https://api.binance.com/api/v3/klines?symbol=${currentSymbol}&interval=${currentTF}&limit=300`)
+    .then(r => r.json())
+    .then(data => {
+      const candles = data.map(d => ({
+        time: d[0] / 1000,
+        open: +d[1],
+        high: +d[2],
+        low: +d[3],
+        close: +d[4]
+      }));
+      candleSeries.setData(candles);
+    });
+}
+
+/* Connessione Internet */
+function initNetwork() {
+  const dot = document.getElementById("net-dot");
+  const text = document.getElementById("net-text");
+
+  function update() {
+    const online = navigator.onLine;
+    dot.style.background = online ? "green" : "red";
+    text.textContent = online ? "ONLINE" : "OFFLINE";
+  }
+
+  window.addEventListener("online", update);
+  window.addEventListener("offline", update);
+  update();
+}
 const list = document.getElementById("crypto-list");
 const netDot = document.getElementById("net-dot");
 let config;
