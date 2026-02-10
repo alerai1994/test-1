@@ -7,43 +7,8 @@ body {
 }
 
 h1 {
-  margin: 20px 0;
   font-size: 56px;
-}
-
-#chart {
-  width: 95%;
-  height: 500px;
-  margin: auto;
-}
-
-.controls {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 15px;
-}
-
-select {
-  padding: 6px;
-  background: #161a1e;
-  color: white;
-  border: none;
-}
-
-.timeframes button {
-  padding: 6px 12px;
-  background: #2b3139;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.timeframes button:hover {
-  background: #f0b90b;
-  color: black;
+  margin: 15px 0;
 }
 
 .status {
@@ -60,4 +25,60 @@ select {
   height: 12px;
   border-radius: 50%;
   background: red;
+}
+
+.ticker-list {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.ticker {
+  background: #161a1e;
+  padding: 10px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.ticker.green {
+  color: #0ecb81;
+}
+
+.ticker.red {
+  color: #f6465d;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 10px;
+}
+
+select {
+  background: #161a1e;
+  color: white;
+  border: none;
+  padding: 6px;
+}
+
+.timeframes button {
+  padding: 6px 12px;
+  background: #2b3139;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.timeframes button:hover {
+  background: #f0b90b;
+  color: black;
+}
+
+#chart {
+  width: 95%;
+  height: 500px;
+  margin: auto;
 }
