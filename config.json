@@ -8,5 +8,7 @@
     { "name": "INJ", "pair": "INJUSDT" }
   ],
   "defaultSymbol": "BTCUSDT",
-  "defaultTimeframe": "1h"
+  "defaultTimeframe": "1h",
+  "tickerUpdateInterval": 1500,
+  "chartLimit": 500
 }
