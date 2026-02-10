@@ -1,15 +1,11 @@
 {
-  "exchanges": {
-    "binance": {
-      "type": "websocket",
-      "symbols": ["BTC","ETH","BNB","SOL","RAY"]
-    },
-    "jupiter": {
-      "type": "polling",
-      "symbol": "ORE",
-      "interval_ms": 2000,
-      "network": "solana",
-      "mint": "oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp"
-    }
-  }
+  "symbols": [
+    { "name": "BTC", "pair": "BTCUSDT" },
+    { "name": "ETH", "pair": "ETHUSDT" },
+    { "name": "BNB", "pair": "BNBUSDT" },
+    { "name": "SOL", "pair": "SOLUSDT" },
+    { "name": "RAY", "pair": "RAYUSDT" },
+    { "name": "INJ", "pair": "INJUSDT" }
+  ],
+  "updateInterval": 5000
 }
