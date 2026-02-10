@@ -7,8 +7,8 @@ body {
 }
 
 h1 {
-  font-size: 56px;
   margin: 15px 0;
+  font-size: 56px;
 }
 
 .status {
@@ -27,27 +27,22 @@ h1 {
   background: red;
 }
 
-.ticker-list {
+.tickers {
   display: flex;
   justify-content: center;
-  gap: 15px;
+  gap: 12px;
   margin-bottom: 10px;
 }
 
 .ticker {
   background: #161a1e;
-  padding: 10px 15px;
+  padding: 10px 14px;
   border-radius: 10px;
   cursor: pointer;
 }
 
-.ticker.green {
-  color: #0ecb81;
-}
-
-.ticker.red {
-  color: #f6465d;
-}
+.ticker.green { color: #0ecb81; }
+.ticker.red { color: #f6465d; }
 
 .controls {
   display: flex;
@@ -79,6 +74,6 @@ select {
 
 #chart {
   width: 95%;
-  height: 500px;
+  height: 520px;
   margin: auto;
 }
