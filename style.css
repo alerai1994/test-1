@@ -1,80 +1,63 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
   background: #0b0e11;
   color: white;
-}
-
-.container {
+  font-family: Arial, sans-serif;
   text-align: center;
-  padding: 40px;
 }
 
 h1 {
-  font-size: 64px;
-  margin-bottom: 20px;
+  margin: 20px 0;
+  font-size: 56px;
 }
 
-.search {
-  margin-bottom: 40px;
+#chart {
+  width: 95%;
+  height: 500px;
+  margin: auto;
 }
 
-.search input {
-  padding: 10px;
-  width: 300px;
-  border-radius: 6px;
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+select {
+  padding: 6px;
+  background: #161a1e;
+  color: white;
   border: none;
 }
 
-.search button {
-  padding: 10px 20px;
-  margin-left: 10px;
-  background: #f0b90b;
+.timeframes button {
+  padding: 6px 12px;
+  background: #2b3139;
+  color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 5px;
   cursor: pointer;
 }
 
-.crypto-list {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 25px;
-}
-
-.crypto {
-  background: #161a1e;
-  border-radius: 12px;
-  padding: 20px;
-}
-
-.crypto.green {
-  border: 2px solid #0ecb81;
-}
-
-.crypto.red {
-  border: 2px solid #f6465d;
-}
-
-.price {
-  font-size: 20px;
-  margin: 10px 0;
-}
-
-canvas {
-  width: 100%;
-  height: 100px;
+.timeframes button:hover {
+  background: #f0b90b;
+  color: black;
 }
 
 .status {
   position: fixed;
-  top: 20px;
+  top: 15px;
   right: 20px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 #net-dot {
-  width: 15px;
-  height: 15px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: red;
-  display: inline-block;
 }
