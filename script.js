@@ -3,6 +3,7 @@ let currentSymbol, currentTF;
 let config;
 const tickerData = {};
 const tickerCharts = {};
+const lastPrices = {};
 
 fetch("config.json")
   .then(r => r.json())
@@ -16,34 +17,34 @@ fetch("config.json")
 function init() {
   initNetwork();
   initTickers();
+  initControls();
   initMainChart();
   loadMainChart();
-  setInterval(updateTickers, 2000);
+  setInterval(updateTickers, config.tickerUpdateInterval);
 }
 
-/* ========= NETWORK ========= */
 function initNetwork() {
   const dot = document.getElementById("net-dot");
   const text = document.getElementById("net-text");
-  const update = () => {
+  function update() {
     dot.style.background = navigator.onLine ? "green" : "red";
     text.textContent = navigator.onLine ? "ONLINE" : "OFFLINE";
-  };
+  }
   window.addEventListener("online", update);
   window.addEventListener("offline", update);
   update();
 }
 
-/* ========= TICKERS ========= */
 function initTickers() {
   const box = document.getElementById("tickers");
 
   config.symbols.forEach(s => {
     tickerData[s.pair] = [];
+    lastPrices[s.pair] = 0;
 
     const div = document.createElement("div");
     div.className = "ticker";
-    div.id = s.pair;
+    div.id = `ticker-${s.pair}`;
     div.innerHTML = `
       <strong>${s.name}</strong><br>
       <span class="price">--</span>
@@ -66,23 +67,25 @@ function updateTickers() {
     .then(r => r.json())
     .then(data => {
       config.symbols.forEach(s => {
-        const t = data.find(d => d.symbol === s.pair);
-        if (!t) return;
+        const item = data.find(d => d.symbol === s.pair);
+        if (!item) return;
 
-        const price = +t.price;
-        const arr = tickerData[s.pair];
-        arr.push(price);
-        if (arr.length > 20) arr.shift();
+        const price = parseFloat(item.price);
+        const prev = lastPrices[s.pair];
+        lastPrices[s.pair] = price;
 
-        const el = document.getElementById(s.pair);
-        el.querySelector(".price").textContent = price.toFixed(2);
+        const div = document.getElementById(`ticker-${s.pair}`);
+        div.querySelector(".price").textContent = price.toFixed(2);
 
-        if (arr.length > 1) {
-          el.classList.remove("green", "red");
-          el.classList.add(price >= arr[arr.length - 2] ? "green" : "red");
+        div.classList.remove("green", "red");
+        if (prev !== 0) {
+          div.classList.add(price >= prev ? "green" : "red");
         }
 
-        drawMiniChart(tickerCharts[s.pair], arr);
+        tickerData[s.pair].push(price);
+        if (tickerData[s.pair].length > 20) tickerData[s.pair].shift();
+
+        drawMiniChart(tickerCharts[s.pair], tickerData[s.pair]);
       });
     });
 }
@@ -97,21 +100,29 @@ function drawMiniChart(ctx, data) {
 
   ctx.strokeStyle = data[data.length - 1] >= data[0] ? "#0ecb81" : "#f6465d";
   ctx.beginPath();
-
   data.forEach((v, i) => {
     const x = (i / (data.length - 1)) * w;
     const y = h - ((v - min) / (max - min || 1)) * h;
     i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
   });
-
   ctx.stroke();
+
   ctx.fillStyle = ctx.strokeStyle;
+  const lastY = h - ((data[data.length - 1] - min) / (max - min || 1)) * h;
   ctx.beginPath();
-  ctx.arc(w - 4, h - ((data[data.length - 1] - min) / (max - min || 1)) * h, 3, 0, Math.PI * 2);
+  ctx.arc(w - 4, lastY, 3, 0, Math.PI * 2);
   ctx.fill();
 }
 
-/* ========= MAIN CHART ========= */
+function initControls() {
+  document.querySelectorAll(".timeframes button").forEach(btn => {
+    btn.onclick = () => {
+      currentTF = btn.dataset.tf;
+      loadMainChart();
+    };
+  });
+}
+
 function initMainChart() {
   chart = LightweightCharts.createChart(document.getElementById("chart"), {
     layout: { background: { color: "#0b0e11" }, textColor: "#d1d4dc" },
@@ -136,7 +147,7 @@ function initMainChart() {
 }
 
 function loadMainChart() {
-  fetch(`https://api.binance.com/api/v3/klines?symbol=${currentSymbol}&interval=${currentTF}&limit=500`)
+  fetch(`https://api.binance.com/api/v3/klines?symbol=${currentSymbol}&interval=${currentTF}&limit=${config.chartLimit}`)
     .then(r => r.json())
     .then(data => {
       const candles = data.map(d => ({
@@ -146,16 +157,10 @@ function loadMainChart() {
         low: +d[3],
         close: +d[4]
       }));
+
       candleSeries.setData(candles);
       lineSeries.setData(candles.map(c => ({ time: c.time, value: c.close })));
+
       chart.timeScale().fitContent();
     });
 }
-
-/* ========= TIMEFRAMES ========= */
-document.querySelectorAll(".timeframes button").forEach(b => {
-  b.onclick = () => {
-    currentTF = b.dataset.tf;
-    loadMainChart();
-  };
-});
