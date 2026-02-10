@@ -41,8 +41,11 @@ h1 {
   border-radius: 12px;
   padding: 10px;
   cursor: pointer;
+  transition: transform 0.2s;
 }
-
+.ticker:hover {
+  transform: scale(1.05);
+}
 .ticker.green { color: #0ecb81; }
 .ticker.red { color: #f6465d; }
 
@@ -57,14 +60,13 @@ h1 {
 
 .timeframes button {
   margin: 0 4px;
-  padding: 6px 12px;
+  padding: 8px 12px;
   background: #2b3139;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
 }
-
 .timeframes button:hover {
   background: #f0b90b;
   color: black;
