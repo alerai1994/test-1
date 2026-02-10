@@ -1,93 +1,88 @@
-let lastPrices = {};
-let charts = {};
+const list = document.getElementById("crypto-list");
+const netDot = document.getElementById("net-dot");
+let config;
+const priceHistory = {};
 
-// ================= UPDATE PRICE =================
-function updatePrice(id, price) {
-    const el = document.getElementById(id);
-    if (!el) return;
+fetch("config.json")
+  .then(r => r.json())
+  .then(c => {
+    config = c;
+    init();
+    setInterval(updatePrices, config.updateInterval);
+  });
 
-    // Setta il colore verde o rosso in base alla variazione del prezzo
-    if (lastPrices[id] !== undefined) {
-        if (price > lastPrices[id]) {
-            el.classList.remove("red");
-            el.classList.add("green");
-        } else if (price < lastPrices[id]) {
-            el.classList.remove("green");
-            el.classList.add("red");
-        }
-    }
-
-    el.textContent = `$${price.toFixed(6)}`;
-    lastPrices[id] = price;
-
-    // Update Chart Data
-    if (charts[id]) {
-        const currentData = charts[id].data.datasets[0].data;
-        currentData.push(price);
-        if (currentData.length > 30) currentData.shift();  // Keep the last 30 data points
-        charts[id].update();
-    }
+function init() {
+  config.symbols.forEach(s => {
+    priceHistory[s.pair] = [];
+    const div = document.createElement("div");
+    div.className = "crypto";
+    div.id = s.pair;
+    div.innerHTML = `
+      <h2>${s.name}</h2>
+      <div class="price" id="price-${s.pair}">--</div>
+      <canvas id="chart-${s.pair}"></canvas>
+    `;
+    list.appendChild(div);
+  });
+  updatePrices();
 }
 
-// ================= BINANCE WS =================
-const binancePairs = ["btcusdt@trade", "ethusdt@trade", "bnbusdt@trade", "solusdt@trade", "rayusdt@trade"];
-const binanceWS = new WebSocket("wss://stream.binance.com:9443/stream?streams=" + binancePairs.join("/"));
-binanceWS.onmessage = (msg) => {
-    const data = JSON.parse(msg.data).data;
-    const symbol = data.s.toLowerCase();
-    updatePrice(symbol, parseFloat(data.p));
-};
+function updatePrices() {
+  config.symbols.forEach(s => {
+    fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${s.pair}`)
+      .then(r => r.json())
+      .then(d => {
+        const price = parseFloat(d.price);
+        const history = priceHistory[s.pair];
+        history.push(price);
+        if (history.length > 20) history.shift();
 
-// ================= JUPITER API POLLING ORE =================
-const ORE_MINT = "oreoU2P8bN6jkk3jbaiVxYnG1dCXcYxwhwyK9jSybcp";
-async function fetchORE() {
-    try {
-        const res = await fetch(`https://lite-api.jup.ag/price/v3?ids=${ORE_MINT}`);
-        const json = await res.json();
-        const data = json.data?.[ORE_MINT];
-        if (data && data.price) updatePrice("oreusdt", parseFloat(data.price));
-    } catch (e) { console.error("Errore prezzo ORE:", e); }
+        const last = history[history.length - 2];
+        const box = document.getElementById(s.pair);
+        const priceEl = document.getElementById(`price-${s.pair}`);
+
+        const up = last ? price > last : true;
+        box.className = "crypto " + (up ? "green" : "red");
+        priceEl.style.color = up ? "#0ecb81" : "#f6465d";
+        priceEl.textContent = price.toFixed(2) + " $";
+
+        drawChart(s.pair, history, up);
+      });
+  });
 }
-fetchORE();
-setInterval(fetchORE, 2000);
 
-// ================= SHOW INFO MODAL =================
-async function showInfo(id) {
-    const modal = document.getElementById("infoModal");
-    const title = document.getElementById("modalTitle");
-    const list = document.getElementById("modalList");
-    const cmcLink = document.getElementById("cmcLink");
-    const modalChart = document.getElementById("modalChart");
+function drawChart(pair, data, up) {
+  const canvas = document.getElementById(`chart-${pair}`);
+  const ctx = canvas.getContext("2d");
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
 
-    title.textContent = id.toUpperCase() + " Info";
-    list.innerHTML = "<li>Caricamento...</li>";
-    cmcLink.href = `https://www.coinmarketcap.com/currencies/${id}`;
-    
-    // Get additional information from CoinGecko API
-    const symbolMap = {
-        btcusdt: "bitcoin", 
-        ethusdt: "ethereum",
-        bnbusdt: "binancecoin",
-        solusdt: "solana",
-        rayusdt: "raydium",
-        oreusdt: "oreo"
-    };
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.strokeStyle = up ? "#0ecb81" : "#f6465d";
+  ctx.beginPath();
 
-    const symbol = symbolMap[id];
-    const url = `https://api.coingecko.com/api/v3/coins/${symbol}`;
-    
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        
-        const volume = data.market_data.total_volumes[0][1].toFixed(2);
-        const minPrice = data.market_data.low_24h.usd.toFixed(2);
-        const maxPrice = data.market_data.high_24h.usd.toFixed(2);
-        const totalSupply = data.market_data.total_supply ? data.market_data.total_supply.toFixed(0) : "N/A";
-        const percentChange = data.market_data.price_change_percentage_24h.toFixed(2);
+  data.forEach((p, i) => {
+    const x = (i / (data.length - 1)) * canvas.width;
+    const y = canvas.height - ((p - Math.min(...data)) /
+      (Math.max(...data) - Math.min(...data))) * canvas.height;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
 
-        list.innerHTML = `
-            <li>Volume (24h): $${volume}</li>
-            <li>Min Prezzo (24h): $${minPrice}</li>
-            <li>Max Prezzo (24h): $${maxPrice}</li>
-            <li>Total
+  ctx.stroke();
+
+  const lastY = canvas.height - ((data[data.length - 1] - Math.min(...data)) /
+    (Math.max(...data) - Math.min(...data))) * canvas.height;
+
+  ctx.fillStyle = ctx.strokeStyle;
+  ctx.beginPath();
+  ctx.arc(canvas.width - 5, lastY, 4, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+/* Stato connessione */
+function updateNetwork() {
+  netDot.style.background = navigator.onLine ? "green" : "red";
+}
+window.addEventListener("online", updateNetwork);
+window.addEventListener("offline", updateNetwork);
+updateNetwork();
