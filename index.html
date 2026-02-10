@@ -2,25 +2,36 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <title>CRYPTO Dashboard</title>
+  <title>CRYPTO TradingView</title>
+
+  <!-- TradingView Lightweight Charts -->
+  <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div class="status">
-    <span id="net-dot"></span>
+<div class="status">
+  <span id="net-dot"></span>
+  <span id="net-text">OFFLINE</span>
+</div>
+
+<h1>CRYPTO 🚀</h1>
+
+<div class="controls">
+  <select id="symbol"></select>
+
+  <div class="timeframes">
+    <button data-tf="1h">1h</button>
+    <button data-tf="2h">2h</button>
+    <button data-tf="4h">4h</button>
+    <button data-tf="1d">1d</button>
+    <button data-tf="1w">1w</button>
+    <button data-tf="1M">1m</button>
   </div>
+</div>
 
-  <div class="container">
-    <h1>CRYPTO <span class="rocket">🚀</span></h1>
-
-    <div class="search">
-      <input type="text" placeholder="Indirizzo wallet..." />
-      <button>Cerca</button>
-    </div>
-
-    <div id="crypto-list" class="crypto-list"></div>
-  </div>
+<div id="chart"></div>
 
 <script src="script.js"></script>
 </body>
