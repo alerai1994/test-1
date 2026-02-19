@@ -18,7 +18,7 @@ function initCoins() {
                 <div class="symbol">${coin.symbol}</div>
                 <div class="price">Loading...</div>
                 <div class="chart">
-                    <canvas width="160" height="70"></canvas>
+                    <canvas width="180" height="80"></canvas>
                     <div class="blink"></div>
                 </div>
             </div>
@@ -46,28 +46,24 @@ async function updateData() {
         const change24 = coin.price_change_percentage_24h;
 
         priceHistory[coin.id].push(currentPrice);
-        if (priceHistory[coin.id].length > 30) {
+        if (priceHistory[coin.id].length > 40) {
             priceHistory[coin.id].shift();
         }
 
         priceEl.textContent = "$" + currentPrice.toLocaleString();
 
-        if (change24 >= 0) {
-            priceEl.className = "price positive";
-            blink.style.background = "#00ff00";
-            drawChart(canvas, priceHistory[coin.id], "#00ff00");
-        } else {
-            priceEl.className = "price negative";
-            blink.style.background = "red";
-            drawChart(canvas, priceHistory[coin.id], "red");
-        }
+        const color = change24 >= 0 ? "#00ff00" : "red";
+        priceEl.className = change24 >= 0 ? "price positive" : "price negative";
+        blink.style.background = color;
 
+        drawChart(canvas, priceHistory[coin.id], color, blink);
+        
         tickerText += `
-            ${coin.symbol} | 
-            MarketCap: $${coin.market_cap.toLocaleString()} | 
-            Vol 24h: $${coin.total_volume.toLocaleString()} | 
-            Max Supply: ${coin.max_supply ?? "N/A"} | 
-            Total Supply: ${coin.total_supply ?? "N/A"} | 
+            ${coin.symbol} |
+            MarketCap: $${coin.market_cap.toLocaleString()} |
+            Vol 24h: $${coin.total_volume.toLocaleString()} |
+            Max Supply: ${coin.max_supply ?? "N/A"} |
+            Total Supply: ${coin.total_supply ?? "N/A"} |
             Circulating: ${coin.circulating_supply.toLocaleString()} — 
         `;
     });
@@ -75,23 +71,34 @@ async function updateData() {
     document.getElementById("ticker").innerHTML = tickerText;
 }
 
-function drawChart(canvas, data, color) {
+function drawChart(canvas, data, color, blink) {
     const ctx = canvas.getContext("2d");
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const width = canvas.width;
+    const height = canvas.height;
+
+    ctx.clearRect(0, 0, width, height);
+
+    if (data.length < 2) return;
 
     const max = Math.max(...data);
     const min = Math.min(...data);
+    const range = max - min || 1;
 
     ctx.beginPath();
     ctx.strokeStyle = color;
     ctx.lineWidth = 2;
 
     data.forEach((value, index) => {
-        const x = (index / (data.length - 1)) * canvas.width;
-        const y = canvas.height - ((value - min) / (max - min || 1)) * canvas.height;
+        const x = (index / (data.length - 1)) * width;
+        const y = height - ((value - min) / range) * height;
 
         if (index === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
+
+        if (index === data.length - 1) {
+            blink.style.left = x + "px";
+            blink.style.top = y + "px";
+        }
     });
 
     ctx.stroke();
