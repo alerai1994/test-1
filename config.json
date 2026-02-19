@@ -1,12 +1,6 @@
 {
-  "siteName": "Crypto",
-  "refreshInterval": 2000,
-  "coins": [
-    { "id": "bitcoin", "symbol": "BTC" },
-    { "id": "ethereum", "symbol": "ETH" },
-    { "id": "binancecoin", "symbol": "BNB" },
-    { "id": "solana", "symbol": "SOL" },
-    { "id": "raydium", "symbol": "RAY" },
-    { "id": "injective-protocol", "symbol": "INJ" }
-  ]
+  "coins": ["bitcoin", "ethereum", "binancecoin", "solana", "raydium", "injective-protocol"],
+  "coinIds": ["btc", "eth", "bnb", "sol", "ray", "inj"],
+  "tickerSpeed": 30,
+  "updateInterval": 2000
 }
