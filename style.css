@@ -25,14 +25,11 @@ header {
 #status {
     font-size: 20px;
     font-weight: bold;
-}
-
-.online {
     color: #00ff00;
 }
 
 .offline {
-    color: red;
+    color: red !important;
 }
 
 .ticker-container {
@@ -45,7 +42,7 @@ header {
 .ticker {
     display: inline-block;
     white-space: nowrap;
-    animation: scroll 25s linear infinite;
+    animation: scroll 35s linear infinite; /* 40% più lenta */
 }
 
 @keyframes scroll {
@@ -73,6 +70,7 @@ header {
 .price {
     font-size: 20px;
     margin-top: 5px;
+    transition: 0.3s ease;
 }
 
 .positive {
@@ -84,8 +82,8 @@ header {
 }
 
 .chart {
-    width: 150px;
-    height: 60px;
+    width: 160px;
+    height: 70px;
     margin-top: 10px;
     border: 1px solid #334155;
     position: relative;
@@ -101,6 +99,8 @@ header {
     width: 8px;
     height: 8px;
     border-radius: 50%;
+    top: 5px;
+    right: 5px;
     animation: blink 1s infinite;
 }
 
