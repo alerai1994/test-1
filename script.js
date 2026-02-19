@@ -1,132 +1,105 @@
-let config;
-let priceHistory = {};
+let config = {};
 
-async function loadConfig() {
-    const response = await fetch("config.json");
-    config = await response.json();
-    initCoins();
-    updateData();
-    setInterval(updateData, config.refreshInterval);
-}
+fetch('config.json')
+  .then(res => res.json())
+  .then(data => {
+    config = data;
+    initDashboard();
+  })
+  .catch(err => console.error('Errore caricamento config:', err));
 
-function initCoins() {
-    const container = document.getElementById("coins");
-    config.coins.forEach(coin => {
-        priceHistory[coin.id] = [];
-        container.innerHTML += `
-            <div class="coin" id="${coin.id}">
-                <div class="symbol">${coin.symbol}</div>
-                <div class="price">Loading...</div>
-                <div class="chart">
-                    <canvas width="220" height="100"></canvas>
-                    <div class="blink"></div>
-                </div>
-            </div>
-        `;
-    });
-}
+function initDashboard() {
+  const { coins, coinIds, updateInterval } = config;
 
-async function updateData() {
-    if (!navigator.onLine) return;
+  // Genera elementi crypto dinamicamente
+  const container = document.getElementById('crypto-container');
+  coinIds.forEach(id => {
+    const div = document.createElement('div');
+    div.classList.add('crypto');
+    div.id = id;
+    div.innerHTML = `<div>${id.toUpperCase()}</div><div class="price">0</div>`;
+    container.appendChild(div);
+  });
 
-    const ids = config.coins.map(c => c.id).join(",");
-    const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&price_change_percentage=24h`;
-    const response = await fetch(url);
-    const data = await response.json();
+  // Connessione
+  const statusDot = document.getElementById('status-dot');
+  function updateStatus(online) {
+    statusDot.style.backgroundColor = online ? 'green' : 'red';
+  }
+  updateStatus(navigator.onLine);
+  window.addEventListener('online', () => updateStatus(true));
+  window.addEventListener('offline', () => updateStatus(false));
 
-    let tickerHTML = "";
+  // Funzione per ottenere dati real-time
+  async function fetchPrices() {
+    try {
+      const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coins.join(',')}&vs_currencies=usd&include_24hr_change=true`);
+      const data = await res.json();
+      coinIds.forEach((id, i) => {
+        const priceElem = document.querySelector(`#${id} .price`);
+        const oldPrice = parseFloat(priceElem.innerText.replace(',', '')) || 0;
+        const newPrice = data[coins[i]].usd;
+        priceElem.innerText = newPrice.toLocaleString();
+        if(newPrice > oldPrice) priceElem.style.color = 'green';
+        else if(newPrice < oldPrice) priceElem.style.color = 'red';
+        else priceElem.style.color = 'black';
+      });
 
-    data.forEach(coin => {
-        const el = document.getElementById(coin.id);
-        const priceEl = el.querySelector(".price");
-        const canvas = el.querySelector("canvas");
-        const blink = el.querySelector(".blink");
-
-        const price = coin.current_price;
-        const change24 = coin.price_change_percentage_24h;
-        const color = change24 >= 0 ? "#00ff00" : "red";
-
-        // ===== PRICE SECTION =====
-        priceHistory[coin.id].push(price);
-        if (priceHistory[coin.id].length > 60) {
-            priceHistory[coin.id].shift();
-        }
-
-        priceEl.textContent = "$" + price.toLocaleString();
-        priceEl.className = change24 >= 0 ? "price positive" : "price negative";
-        blink.style.background = color;
-
-        animateChart(canvas, priceHistory[coin.id], color, blink);
-
-        // ===== TICKER SECTION =====
-        const percentClass = change24 >= 0 ? "ticker-positive" : "ticker-negative";
-
-        tickerHTML += `
-            <span class="ticker-item">
-                ${coin.symbol} 
-                Price: $${price.toLocaleString()} |
-                24h: <span class="${percentClass}">
-                ${change24.toFixed(2)}%
-                </span> |
-                Market Cap: $${coin.market_cap.toLocaleString()} |
-                Vol 24h: $${coin.total_volume.toLocaleString()} |
-                Total Supply: ${coin.total_supply ?? "N/A"} |
-                Max Supply: ${coin.max_supply ?? "N/A"}
-            </span>
-        `;
-    });
-
-    document.getElementById("ticker").innerHTML = tickerHTML;
-}
-
-function animateChart(canvas, data, color, blink) {
-    const ctx = canvas.getContext("2d");
-    const width = canvas.width;
-    const height = canvas.height;
-
-    ctx.clearRect(0, 0, width, height);
-
-    if (data.length < 2) return;
-
-    const max = Math.max(...data);
-    const min = Math.min(...data);
-    const range = max - min || 1;
-
-    ctx.beginPath();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
-
-    data.forEach((value, index) => {
-        const x = (index / (data.length - 1)) * width;
-        const y = height - ((value - min) / range) * height;
-
-        if (index === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-
-        if (index === data.length - 1) {
-            blink.style.left = x + "px";
-            blink.style.top = y + "px";
-        }
-    });
-
-    ctx.stroke();
-}
-
-function updateStatus() {
-    const dot = document.getElementById("status-dot");
-    const text = document.getElementById("status-text");
-
-    if (navigator.onLine) {
-        dot.style.background = "#00ff00";
-        text.textContent = "ONLINE";
-    } else {
-        dot.style.background = "red";
-        text.textContent = "OFFLINE";
+      // Aggiorna ticker
+      const marketCap = Object.values(data).reduce((a,b) => a + b.usd, 0);
+      const vol24h = Object.values(data).reduce((a,b) => a + b.usd_24h_change || 0, 0);
+      const ticker = document.getElementById('ticker');
+      ticker.style.animationDuration = `${config.tickerSpeed}s`;
+      ticker.innerText = `Market Cap: ${marketCap.toFixed(2)} | Vol 24h: ${vol24h.toFixed(2)} | Max Total Supply: -`;
+    } catch(e) {
+      updateStatus(false);
+      console.error(e);
     }
+  }
+
+  fetchPrices();
+  setInterval(fetchPrices, updateInterval);
+
+  // Grafico BTC
+  const ctx = document.getElementById('priceChart').getContext('2d');
+  const priceChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{
+        label: 'BTC',
+        data: [],
+        borderColor: 'blue',
+        fill: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: { tooltip: { enabled: true } },
+      scales: {
+        x: { title: { display: true, text: 'Tempo' } },
+        y: { title: { display: true, text: 'Prezzo (USD)' } }
+      }
+    }
+  });
+
+  async function updateChart() {
+    try {
+      const res = await fetch(`https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=1&interval=hourly`);
+      const data = await res.json();
+      priceChart.data.labels = data.prices.map(p => new Date(p[0]).toLocaleTimeString());
+      priceChart.data.datasets[0].data = data.prices.map(p => p[1]);
+      priceChart.update();
+
+      document.getElementById('start-date').innerText = 'Start: ' + new Date(data.prices[0][0]).toLocaleDateString();
+      document.getElementById('end-date').innerText = 'Oggi: ' + new Date().toLocaleDateString();
+      document.getElementById('current-price').innerText = 'Prezzo: ' + data.prices.slice(-1)[0][1].toFixed(2);
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
+  updateChart();
+  setInterval(updateChart, updateInterval);
 }
-
-window.addEventListener("online", updateStatus);
-window.addEventListener("offline", updateStatus);
-
-updateStatus();
-loadConfig();
