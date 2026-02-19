@@ -1,37 +1,36 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <title>Crypto Dashboard</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <meta charset="UTF-8">
+    <title>Crypto</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<h1 id="crypto-title">Crypto Dashboard</h1>
-<div>
-  Connessione
-  <span id="status-dot"></span>
-</div>
+<div class="container">
 
-<div id="ticker-container">
-  <div id="ticker">Loading...</div>
-</div>
+    <div class="header">
+        <h1 class="logo">Crypto</h1>
 
-<div class="crypto-container" id="crypto-container">
-  <!-- Crypto items generati dinamicamente -->
-</div>
+        <div class="status">
+            <div id="dot" class="dot"></div>
+            <span id="statusText">ONLINE</span>
+        </div>
+    </div>
 
-<div id="chart-container">
-  <canvas id="priceChart"></canvas>
-  <div id="chart-legend">
-    <span id="current-price">Prezzo: 0</span>
-    <span id="price-change">Cambio: 0</span>
-  </div>
-  <div id="chart-dates">
-    <span id="start-date">Start: -</span>
-    <span id="end-date">Oggi: -</span>
-  </div>
+    <div class="ticker">
+        <div id="tickerContent" class="ticker-content"></div>
+    </div>
+
+    <div class="coins">
+        <span>₿ BTC</span>
+        <span>Ξ ETH</span>
+        <span>BNB</span>
+        <span>SOL</span>
+        <span>RAY</span>
+        <span>INJ</span>
+    </div>
+
 </div>
 
 <script src="script.js"></script>
