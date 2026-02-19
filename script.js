@@ -18,7 +18,7 @@ function initCoins() {
                 <div class="symbol">${coin.symbol}</div>
                 <div class="price">Loading...</div>
                 <div class="chart">
-                    <canvas></canvas>
+                    <canvas width="160" height="70"></canvas>
                     <div class="blink"></div>
                 </div>
             </div>
@@ -30,7 +30,7 @@ async function updateData() {
     if (!navigator.onLine) return;
 
     const ids = config.coins.map(c => c.id).join(",");
-    const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}`;
+    const url = `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${ids}&price_change_percentage=24h`;
     const response = await fetch(url);
     const data = await response.json();
 
@@ -39,43 +39,43 @@ async function updateData() {
     data.forEach(coin => {
         const el = document.getElementById(coin.id);
         const priceEl = el.querySelector(".price");
+        const canvas = el.querySelector("canvas");
         const blink = el.querySelector(".blink");
 
-        const lastPrice = priceHistory[coin.id].slice(-1)[0];
         const currentPrice = coin.current_price;
+        const change24 = coin.price_change_percentage_24h;
 
         priceHistory[coin.id].push(currentPrice);
-        if (priceHistory[coin.id].length > 20) {
+        if (priceHistory[coin.id].length > 30) {
             priceHistory[coin.id].shift();
         }
 
         priceEl.textContent = "$" + currentPrice.toLocaleString();
 
-        if (lastPrice) {
-            if (currentPrice > lastPrice) {
-                priceEl.className = "price positive";
-                blink.style.background = "#00ff00";
-            } else if (currentPrice < lastPrice) {
-                priceEl.className = "price negative";
-                blink.style.background = "red";
-            }
+        if (change24 >= 0) {
+            priceEl.className = "price positive";
+            blink.style.background = "#00ff00";
+            drawChart(canvas, priceHistory[coin.id], "#00ff00");
+        } else {
+            priceEl.className = "price negative";
+            blink.style.background = "red";
+            drawChart(canvas, priceHistory[coin.id], "red");
         }
 
-        drawChart(el.querySelector("canvas"), priceHistory[coin.id]);
-
         tickerText += `
+            ${coin.symbol} | 
             MarketCap: $${coin.market_cap.toLocaleString()} | 
             Vol 24h: $${coin.total_volume.toLocaleString()} | 
             Max Supply: ${coin.max_supply ?? "N/A"} | 
             Total Supply: ${coin.total_supply ?? "N/A"} | 
-            Circulating: ${coin.circulating_supply.toLocaleString()} —
+            Circulating: ${coin.circulating_supply.toLocaleString()} — 
         `;
     });
 
     document.getElementById("ticker").innerHTML = tickerText;
 }
 
-function drawChart(canvas, data) {
+function drawChart(canvas, data, color) {
     const ctx = canvas.getContext("2d");
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -83,12 +83,12 @@ function drawChart(canvas, data) {
     const min = Math.min(...data);
 
     ctx.beginPath();
-    ctx.strokeStyle = "#00c6ff";
+    ctx.strokeStyle = color;
     ctx.lineWidth = 2;
 
     data.forEach((value, index) => {
         const x = (index / (data.length - 1)) * canvas.width;
-        const y = canvas.height - ((value - min) / (max - min)) * canvas.height;
+        const y = canvas.height - ((value - min) / (max - min || 1)) * canvas.height;
 
         if (index === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
@@ -101,10 +101,10 @@ function updateStatus() {
     const status = document.getElementById("status");
     if (navigator.onLine) {
         status.textContent = "ONLINE";
-        status.className = "online";
+        status.style.color = "#00ff00";
     } else {
         status.textContent = "OFFLINE";
-        status.className = "offline";
+        status.style.color = "red";
     }
 }
 
