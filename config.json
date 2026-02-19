@@ -1,6 +1,6 @@
 {
   "siteName": "Crypto",
-  "refreshInterval": 10000,
+  "refreshInterval": 2000,
   "coins": [
     { "id": "bitcoin", "symbol": "BTC" },
     { "id": "ethereum", "symbol": "ETH" },
