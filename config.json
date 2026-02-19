@@ -1,6 +1,6 @@
 {
-  "coins": ["bitcoin", "ethereum", "binancecoin", "solana", "raydium", "injective-protocol"],
-  "coinIds": ["btc", "eth", "bnb", "sol", "ray", "inj"],
-  "tickerSpeed": 30,
-  "updateInterval": 2000
+  "marketcap": "1.72T",
+  "volume24h": "85B",
+  "change24h": 2.45,
+  "maxSupply": "21M"
 }
