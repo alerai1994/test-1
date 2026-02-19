@@ -3,7 +3,7 @@ body {
     background: #0d1117;
     font-family: Arial, sans-serif;
     color: white;
-    overflow: hidden;
+    overflow-x: hidden;
 }
 
 .container {
@@ -14,11 +14,10 @@ body {
 .logo {
     font-size: 65px;
     color: #00bfff;
-    text-shadow: 
+    text-shadow:
         0 0 10px #00bfff,
         0 0 20px #0080ff,
         0 0 40px #0055ff;
-    margin: 0;
 }
 
 .header {
@@ -32,14 +31,13 @@ body {
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 18px;
-    color: white;
 }
 
 .dot {
     width: 12px;
     height: 12px;
     border-radius: 50%;
+    background: green;
     animation: blink 1s infinite;
 }
 
@@ -48,40 +46,37 @@ body {
 }
 
 .ticker {
-    margin-top: 50px;
-    overflow: hidden;
-    white-space: nowrap;
+    margin-top: 40px;
 }
 
 .ticker-content {
-    display: inline-block;
-    padding-left: 100%;
-    animation: scroll 15s linear infinite;
-    font-size: 20px;
-}
-
-@keyframes scroll {
-    from { transform: translateX(0); }
-    to { transform: translateX(-100%); }
-}
-
-.positive {
-    color: #00ff88;
-}
-
-.negative {
-    color: #ff3b3b;
+    font-size: 18px;
 }
 
 .coins {
     margin-top: 40px;
-    font-size: 20px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
 }
 
-.price-line {
-    font-size: 18px;
+.coin-card {
+    background: #161b22;
+    padding: 15px;
+    border-radius: 10px;
+    width: 220px;
 }
+
+.price {
+    font-size: 18px;
+    margin: 5px 0;
+}
+
+canvas {
+    width: 100%;
+    height: 60px;
+}
+
+.positive { color: #00ff88; }
+.negative { color: #ff3b3b; }
