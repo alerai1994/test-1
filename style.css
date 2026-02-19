@@ -11,7 +11,6 @@ body {
     padding-top: 80px;
 }
 
-/* Logo */
 .logo {
     font-size: 65px;
     color: #00bfff;
@@ -22,7 +21,6 @@ body {
     margin: 0;
 }
 
-/* Header */
 .header {
     display: flex;
     justify-content: center;
@@ -30,7 +28,6 @@ body {
     gap: 25px;
 }
 
-/* Status */
 .status {
     display: flex;
     align-items: center;
@@ -50,7 +47,6 @@ body {
     50% { opacity: 0.3; }
 }
 
-/* Ticker */
 .ticker {
     margin-top: 50px;
     overflow: hidden;
@@ -77,11 +73,15 @@ body {
     color: #ff3b3b;
 }
 
-/* Coins */
 .coins {
     margin-top: 40px;
-    font-size: 22px;
+    font-size: 20px;
     display: flex;
-    justify-content: center;
-    gap: 30px;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.price-line {
+    font-size: 18px;
 }
