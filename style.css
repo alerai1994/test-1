@@ -28,10 +28,6 @@ header {
     color: #00ff00;
 }
 
-.offline {
-    color: red !important;
-}
-
 .ticker-container {
     width: 100%;
     overflow: hidden;
@@ -42,7 +38,7 @@ header {
 .ticker {
     display: inline-block;
     white-space: nowrap;
-    animation: scroll 35s linear infinite; /* 40% più lenta */
+    animation: scroll 50s linear infinite; /* 70% più lenta */
 }
 
 @keyframes scroll {
@@ -82,30 +78,28 @@ header {
 }
 
 .chart {
-    width: 160px;
-    height: 70px;
+    width: 180px;
+    height: 80px;
     margin-top: 10px;
     border: 1px solid #334155;
     position: relative;
 }
 
 .chart canvas {
-    width: 100%;
-    height: 100%;
+    display: block;
 }
 
 .blink {
     position: absolute;
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    top: 5px;
-    right: 5px;
     animation: blink 1s infinite;
+    transform: translate(-50%, -50%);
 }
 
 @keyframes blink {
     0% { opacity: 1; }
-    50% { opacity: 0.2; }
+    50% { opacity: 0.3; }
     100% { opacity: 1; }
 }
