@@ -1,14 +1,12 @@
 {
-  "symbols": [
-    { "name": "BTC", "pair": "BTCUSDT" },
-    { "name": "ETH", "pair": "ETHUSDT" },
-    { "name": "BNB", "pair": "BNBUSDT" },
-    { "name": "SOL", "pair": "SOLUSDT" },
-    { "name": "RAY", "pair": "RAYUSDT" },
-    { "name": "INJ", "pair": "INJUSDT" }
-  ],
-  "defaultSymbol": "BTCUSDT",
-  "defaultTimeframe": "1h",
-  "tickerUpdateInterval": 1500,
-  "chartLimit": 500
+  "siteName": "Crypto",
+  "refreshInterval": 10000,
+  "coins": [
+    { "id": "bitcoin", "symbol": "BTC" },
+    { "id": "ethereum", "symbol": "ETH" },
+    { "id": "binancecoin", "symbol": "BNB" },
+    { "id": "solana", "symbol": "SOL" },
+    { "id": "raydium", "symbol": "RAY" },
+    { "id": "injective-protocol", "symbol": "INJ" }
+  ]
 }
