@@ -9,7 +9,7 @@ fetch('config.json')
   .catch(err => console.error('Errore caricamento config:', err));
 
 function initDashboard() {
-  const { coins, coinIds, updateInterval } = config;
+  const { coins, coinIds, updateInterval, tickerSpeed } = config;
 
   // Genera elementi crypto dinamicamente
   const container = document.getElementById('crypto-container');
@@ -30,11 +30,16 @@ function initDashboard() {
   window.addEventListener('online', () => updateStatus(true));
   window.addEventListener('offline', () => updateStatus(false));
 
-  // Funzione per ottenere dati real-time
+  // Ticker
+  const ticker = document.getElementById('ticker');
+  ticker.style.animationDuration = `${tickerSpeed}s`;
+
   async function fetchPrices() {
     try {
       const res = await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${coins.join(',')}&vs_currencies=usd&include_24hr_change=true`);
       const data = await res.json();
+
+      // Aggiorna prezzi e colori
       coinIds.forEach((id, i) => {
         const priceElem = document.querySelector(`#${id} .price`);
         const oldPrice = parseFloat(priceElem.innerText.replace(',', '')) || 0;
@@ -45,12 +50,11 @@ function initDashboard() {
         else priceElem.style.color = 'black';
       });
 
-      // Aggiorna ticker
-      const marketCap = Object.values(data).reduce((a,b) => a + b.usd, 0);
-      const vol24h = Object.values(data).reduce((a,b) => a + b.usd_24h_change || 0, 0);
-      const ticker = document.getElementById('ticker');
-      ticker.style.animationDuration = `${config.tickerSpeed}s`;
-      ticker.innerText = `Market Cap: ${marketCap.toFixed(2)} | Vol 24h: ${vol24h.toFixed(2)} | Max Total Supply: -`;
+      // Aggiorna ticker con percentuali
+      const marketCapTotal = Object.values(data).reduce((acc, coin) => acc + (coin.usd || 0), 0);
+      const vol24hTotal = Object.values(data).reduce((acc, coin) => acc + (coin.usd_24h_change || 0), 0);
+      ticker.innerText = `Market Cap: ${marketCapTotal.toFixed(2)} (${(marketCapTotal/1000000).toFixed(2)}%) | Vol 24h: ${vol24hTotal.toFixed(2)} (${(vol24hTotal/1000000).toFixed(2)}%) | Max Total Supply: -`;
+
     } catch(e) {
       updateStatus(false);
       console.error(e);
@@ -60,46 +64,17 @@ function initDashboard() {
   fetchPrices();
   setInterval(fetchPrices, updateInterval);
 
-  // Grafico BTC
+  // Grafico multi-coin
   const ctx = document.getElementById('priceChart').getContext('2d');
+  const datasets = coins.map((coin, i) => ({
+    label: coin.toUpperCase(),
+    data: [],
+    borderColor: `hsl(${i*60}, 80%, 50%)`,
+    fill: false
+  }));
+
   const priceChart = new Chart(ctx, {
     type: 'line',
-    data: {
-      labels: [],
-      datasets: [{
-        label: 'BTC',
-        data: [],
-        borderColor: 'blue',
-        fill: false,
-      }]
-    },
+    data: { labels: [], datasets },
     options: {
       responsive: true,
-      interaction: { mode: 'index', intersect: false },
-      plugins: { tooltip: { enabled: true } },
-      scales: {
-        x: { title: { display: true, text: 'Tempo' } },
-        y: { title: { display: true, text: 'Prezzo (USD)' } }
-      }
-    }
-  });
-
-  async function updateChart() {
-    try {
-      const res = await fetch(`https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=1&interval=hourly`);
-      const data = await res.json();
-      priceChart.data.labels = data.prices.map(p => new Date(p[0]).toLocaleTimeString());
-      priceChart.data.datasets[0].data = data.prices.map(p => p[1]);
-      priceChart.update();
-
-      document.getElementById('start-date').innerText = 'Start: ' + new Date(data.prices[0][0]).toLocaleDateString();
-      document.getElementById('end-date').innerText = 'Oggi: ' + new Date().toLocaleDateString();
-      document.getElementById('current-price').innerText = 'Prezzo: ' + data.prices.slice(-1)[0][1].toFixed(2);
-    } catch(e) {
-      console.error(e);
-    }
-  }
-
-  updateChart();
-  setInterval(updateChart, updateInterval);
-}
