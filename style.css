@@ -1,4 +1,24 @@
-body {
+body
+#crypto-title {
+  color: #00BFFF; /* Azzurro brillante */
+  font-size: 2.5em;
+  font-weight: bold;
+  text-shadow: 0 0 5px #00BFFF, 0 0 10px #00BFFF, 0 0 20px #87CEFA;
+  animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+  0% {
+    text-shadow: 0 0 5px #00BFFF, 0 0 10px #00BFFF, 0 0 20px #87CEFA;
+  }
+  50% {
+    text-shadow: 0 0 10px #00BFFF, 0 0 20px #00BFFF, 0 0 30px #87CEFA;
+  }
+  100% {
+    text-shadow: 0 0 5px #00BFFF, 0 0 10px #00BFFF, 0 0 20px #87CEFA;
+  }
+}
+{
   font-family: Arial, sans-serif;
   background: linear-gradient(to right, #87CEFA, #E0FFFF);
   color: #000;
