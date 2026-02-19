@@ -1,5 +1,6 @@
 let config;
 let priceHistory = {};
+let animationFrames = {};
 
 async function loadConfig() {
     const response = await fetch("config.json");
@@ -18,7 +19,7 @@ function initCoins() {
                 <div class="symbol">${coin.symbol}</div>
                 <div class="price">Loading...</div>
                 <div class="chart">
-                    <canvas width="200" height="90"></canvas>
+                    <canvas width="220" height="100"></canvas>
                     <div class="blink"></div>
                 </div>
             </div>
@@ -42,66 +43,70 @@ async function updateData() {
         const canvas = el.querySelector("canvas");
         const blink = el.querySelector(".blink");
 
-        const currentPrice = coin.current_price;
+        const price = coin.current_price;
         const change24 = coin.price_change_percentage_24h;
 
-        priceHistory[coin.id].push(currentPrice);
-        if (priceHistory[coin.id].length > 50) {
+        priceHistory[coin.id].push(price);
+        if (priceHistory[coin.id].length > 60) {
             priceHistory[coin.id].shift();
         }
 
-        priceEl.textContent = "$" + currentPrice.toLocaleString();
-
         const color = change24 >= 0 ? "#00ff00" : "red";
+        priceEl.textContent = "$" + price.toLocaleString();
         priceEl.className = change24 >= 0 ? "price positive" : "price negative";
         blink.style.background = color;
 
-        drawChart(canvas, priceHistory[coin.id], color, blink);
+        animateChart(canvas, priceHistory[coin.id], color, blink);
 
-        tickerText += `
-            ${coin.symbol} |
-            MarketCap: $${coin.market_cap.toLocaleString()} |
-            Vol 24h: $${coin.total_volume.toLocaleString()} |
-            Max Supply: ${coin.max_supply ?? "N/A"} |
-            Total Supply: ${coin.total_supply ?? "N/A"} |
-            Circulating: ${coin.circulating_supply.toLocaleString()} — 
-        `;
+        tickerText += `${coin.symbol} $${price.toLocaleString()} — `;
     });
 
     document.getElementById("ticker").innerHTML = tickerText;
 }
 
-function drawChart(canvas, data, color, blink) {
+function animateChart(canvas, data, color, blink) {
     const ctx = canvas.getContext("2d");
     const width = canvas.width;
     const height = canvas.height;
 
-    ctx.clearRect(0, 0, width, height);
+    let progress = 0;
+    const duration = 300;
 
-    if (data.length < 2) return;
+    function draw() {
+        progress += 16;
+        const percent = Math.min(progress / duration, 1);
 
-    const max = Math.max(...data);
-    const min = Math.min(...data);
-    const range = max - min || 1;
+        ctx.clearRect(0, 0, width, height);
 
-    ctx.beginPath();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 2;
+        const max = Math.max(...data);
+        const min = Math.min(...data);
+        const range = max - min || 1;
 
-    data.forEach((value, index) => {
-        const x = (index / (data.length - 1)) * width;
-        const y = height - ((value - min) / range) * height;
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
 
-        if (index === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+        data.forEach((value, index) => {
+            const x = (index / (data.length - 1)) * width * percent;
+            const y = height - ((value - min) / range) * height;
 
-        if (index === data.length - 1) {
-            blink.style.left = x + "px";
-            blink.style.top = y + "px";
+            if (index === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+
+            if (index === data.length - 1) {
+                blink.style.left = x + "px";
+                blink.style.top = y + "px";
+            }
+        });
+
+        ctx.stroke();
+
+        if (percent < 1) {
+            requestAnimationFrame(draw);
         }
-    });
+    }
 
-    ctx.stroke();
+    requestAnimationFrame(draw);
 }
 
 function updateStatus() {
