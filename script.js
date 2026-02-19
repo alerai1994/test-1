@@ -18,7 +18,7 @@ function initCoins() {
                 <div class="symbol">${coin.symbol}</div>
                 <div class="price">Loading...</div>
                 <div class="chart">
-                    <canvas width="180" height="80"></canvas>
+                    <canvas width="200" height="90"></canvas>
                     <div class="blink"></div>
                 </div>
             </div>
@@ -46,7 +46,7 @@ async function updateData() {
         const change24 = coin.price_change_percentage_24h;
 
         priceHistory[coin.id].push(currentPrice);
-        if (priceHistory[coin.id].length > 40) {
+        if (priceHistory[coin.id].length > 50) {
             priceHistory[coin.id].shift();
         }
 
@@ -57,7 +57,7 @@ async function updateData() {
         blink.style.background = color;
 
         drawChart(canvas, priceHistory[coin.id], color, blink);
-        
+
         tickerText += `
             ${coin.symbol} |
             MarketCap: $${coin.market_cap.toLocaleString()} |
@@ -105,13 +105,15 @@ function drawChart(canvas, data, color, blink) {
 }
 
 function updateStatus() {
-    const status = document.getElementById("status");
+    const dot = document.getElementById("status-dot");
+    const text = document.getElementById("status-text");
+
     if (navigator.onLine) {
-        status.textContent = "ONLINE";
-        status.style.color = "#00ff00";
+        dot.style.background = "#00ff00";
+        text.textContent = "ONLINE";
     } else {
-        status.textContent = "OFFLINE";
-        status.style.color = "red";
+        dot.style.background = "red";
+        text.textContent = "OFFLINE";
     }
 }
 
