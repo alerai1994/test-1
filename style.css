@@ -1,114 +1,13 @@
-body {
-    margin: 0;
-    background: #0f172a;
-    font-family: Arial, sans-serif;
-    color: white;
-    overflow-x: hidden;
+.ticker-item {
+    margin-right: 80px;
 }
 
-header {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 25px 0;
-}
-
-.logo {
-    font-size: 70px;
-    font-weight: bold;
-    background: linear-gradient(to right, #00c6ff, #0072ff);
-    -webkit-background-clip: text;
-    color: transparent;
-}
-
-.status-container {
-    position: absolute;
-    left: 30px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-#status-text {
-    color: white;
+.ticker-positive {
+    color: #00ff00;
     font-weight: bold;
 }
 
-.dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    animation: blink 1s infinite;
-}
-
-@keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0.3; }
-    100% { opacity: 1; }
-}
-
-.ticker-container {
-    width: 100%;
-    overflow: hidden;
-    background: #111827;
-    padding: 12px 0;
-}
-
-.ticker {
-    display: inline-block;
-    white-space: nowrap;
-    animation: scroll 65s linear infinite;
-}
-
-@keyframes scroll {
-    from { transform: translateX(100%); }
-    to { transform: translateX(-100%); }
-}
-
-.coins {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 50px;
-    margin-top: 50px;
-}
-
-.coin {
-    text-align: center;
-}
-
-.symbol {
-    font-size: 26px;
+.ticker-negative {
+    color: red;
     font-weight: bold;
-}
-
-.price {
-    font-size: 22px;
-    margin-top: 8px;
-    transition: 0.3s ease;
-}
-
-.positive { color: #00ff00; }
-.negative { color: red; }
-
-.chart {
-    width: 220px;
-    height: 100px;
-    margin-top: 15px;
-    border: 1px solid #334155;
-    position: relative;
-}
-
-.chart canvas {
-    display: block;
-}
-
-.blink {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    animation: blink 1s infinite;
 }
