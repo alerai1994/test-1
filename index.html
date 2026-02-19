@@ -1,25 +1,40 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <title>Crypto</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Crypto Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
-<header>
-    <div class="status-container">
-        <div id="status-dot" class="dot"></div>
-        <div id="status-text">ONLINE</div>
-    </div>
-    <h1 class="logo">Crypto</h1>
-</header>
-
-<div class="ticker-container">
-    <div class="ticker" id="ticker"></div>
+<h1>Crypto Dashboard</h1>
+<div>
+  Connessione
+  <span id="status-dot"></span>
 </div>
 
-<section class="coins" id="coins"></section>
+<div id="ticker-container">
+  <div id="ticker">
+    Loading...
+  </div>
+</div>
+
+<div class="crypto-container" id="crypto-container">
+  <!-- Crypto items saranno generati dinamicamente -->
+</div>
+
+<div id="chart-container">
+  <canvas id="priceChart"></canvas>
+  <div id="chart-legend">
+    <span id="current-price">Prezzo: 0</span>
+    <span id="price-change">Cambio: 0</span>
+  </div>
+  <div id="chart-dates">
+    <span id="start-date">Start: -</span>
+    <span id="end-date">Oggi: -</span>
+  </div>
+</div>
 
 <script src="script.js"></script>
 </body>
