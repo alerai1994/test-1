@@ -1,3 +1,10 @@
 {
-  "symbols": ["bitcoin","ethereum","binancecoin","solana","raydium","injective-protocol"]
+  "coins": [
+    { "symbol": "BTC", "stream": "btcusdt" },
+    { "symbol": "ETH", "stream": "ethusdt" },
+    { "symbol": "BNB", "stream": "bnbusdt" },
+    { "symbol": "SOL", "stream": "solusdt" },
+    { "symbol": "RAY", "stream": "rayusdt" },
+    { "symbol": "INJ", "stream": "injusdt" }
+  ]
 }
