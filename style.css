@@ -6,39 +6,64 @@ body {
     overflow-x: hidden;
 }
 
+/* HEADER */
 header {
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
-    padding: 20px;
+    padding: 25px 0;
 }
 
 .logo {
-    font-size: 60px;
+    font-size: 70px;
     font-weight: bold;
     background: linear-gradient(to right, #00c6ff, #0072ff);
     -webkit-background-clip: text;
     color: transparent;
 }
 
-#status {
-    font-size: 20px;
-    font-weight: bold;
-    color: #00ff00;
+/* STATUS */
+.status-container {
+    position: absolute;
+    left: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
+#status-text {
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 1; }
+    50% { opacity: 0.3; }
+    100% { opacity: 1; }
+}
+
+/* TICKER */
 .ticker-container {
     width: 100%;
     overflow: hidden;
     background: #111827;
-    padding: 10px 0;
+    padding: 12px 0;
+    font-size: 18px;
 }
 
 .ticker {
     display: inline-block;
     white-space: nowrap;
-    animation: scroll 50s linear infinite; /* 70% più lenta */
+    animation: scroll 65s linear infinite; /* 85% più lenta */
 }
 
 @keyframes scroll {
@@ -46,12 +71,13 @@ header {
     to { transform: translateX(-100%); }
 }
 
+/* COINS */
 .coins {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 40px;
-    margin-top: 40px;
+    gap: 50px;
+    margin-top: 50px;
 }
 
 .coin {
@@ -59,13 +85,13 @@ header {
 }
 
 .symbol {
-    font-size: 24px;
+    font-size: 26px;
     font-weight: bold;
 }
 
 .price {
-    font-size: 20px;
-    margin-top: 5px;
+    font-size: 22px;
+    margin-top: 8px;
     transition: 0.3s ease;
 }
 
@@ -77,10 +103,11 @@ header {
     color: red;
 }
 
+/* CHART */
 .chart {
-    width: 180px;
-    height: 80px;
-    margin-top: 10px;
+    width: 200px;
+    height: 90px;
+    margin-top: 12px;
     border: 1px solid #334155;
     position: relative;
 }
@@ -94,12 +121,6 @@ header {
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    animation: blink 1s infinite;
     transform: translate(-50%, -50%);
-}
-
-@keyframes blink {
-    0% { opacity: 1; }
-    50% { opacity: 0.3; }
-    100% { opacity: 1; }
+    animation: blink 1s infinite;
 }
