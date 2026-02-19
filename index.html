@@ -1,34 +1,22 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <title>CRYPTO Dashboard</title>
-
-  <script src="https://unpkg.com/lightweight-charts/dist/lightweight-charts.standalone.production.js"></script>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Crypto Online</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="status">
-  <span id="net-dot"></span>
-  <span id="net-text">OFFLINE</span>
+<header>
+    <h1 class="logo">Crypto</h1>
+    <div id="status" class="online">ONLINE</div>
+</header>
+
+<div class="ticker-container">
+    <div class="ticker" id="ticker"></div>
 </div>
 
-<h1>CRYPTO 🚀</h1>
-
-<div id="tickers" class="tickers"></div>
-
-<div class="controls">
-  <div class="timeframes">
-    <button data-tf="1h">1H</button>
-    <button data-tf="4h">4H</button>
-    <button data-tf="1d">1D</button>
-    <button data-tf="1w">1W</button>
-    <button data-tf="1M">1M</button>
-  </div>
-</div>
-
-<div id="chart"></div>
+<section class="coins" id="coins"></section>
 
 <script src="script.js"></script>
 </body>
